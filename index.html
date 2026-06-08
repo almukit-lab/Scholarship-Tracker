@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scholarship Application Tracker — AL MUKIT-LAB</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#0a0a0a;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.6;}
+:root{--black:#0a0a0a;--accent:#d4790a;--border:#e8e8e8;--bg:#f8f8f8;--sub:#5a5a5a;--muted:#9b9b9b;--success:#16a34a;--danger:#dc2626;--blue:#1d4ed8;}
+
+/* TOP BAR */
+.topbar{background:var(--black);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.topbar-logo{font-size:14px;font-weight:700;color:#fff;}
+.topbar-logo span{color:var(--accent);}
+.topbar-right{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+
+/* MAIN */
+.wrap{max-width:1100px;margin:0 auto;padding:40px 24px;}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:36px;}
+.stat{background:var(--bg);border:1px solid var(--border);padding:18px 20px;border-radius:6px;text-align:center;}
+.stat-n{font-size:28px;font-weight:800;letter-spacing:-1.5px;color:var(--black);display:block;line-height:1;margin-bottom:4px;}
+.stat-n.green{color:var(--success);}
+.stat-n.amber{color:var(--accent);}
+.stat-n.blue{color:var(--blue);}
+.stat-l{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+/* SECTION HEADING */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.sec-title{font-size:16px;font-weight:800;letter-spacing:-.5px;}
+.sec-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);}
+
+/* ADD BUTTON */
+.add-btn{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px 16px;background:var(--black);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background .15s;}
+.add-btn:hover{background:var(--accent);}
+
+/* SCHOLARSHIP CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:40px;}
+.sch-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:box-shadow .2s;}
+.sch-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.sch-head{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sch-name{font-size:13px;font-weight:700;letter-spacing:-.2px;}
+.sch-country{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.sch-status{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:99px;white-space:nowrap;}
+.s-planning{background:#eff6ff;color:var(--blue);}
+.s-inprogress{background:#fff4e8;color:var(--accent);}
+.s-submitted{background:#f0fdf4;color:var(--success);}
+.s-rejected{background:#fef2f2;color:var(--danger);}
+.s-accepted{background:#0a0a0a;color:#fff;}
+.sch-body{padding:14px 18px;background:var(--bg);border-top:1px solid var(--border);}
+.sch-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.sch-row:last-child{border-bottom:none;}
+.sch-row-label{color:var(--muted);font-weight:500;}
+.sch-row-val{font-weight:600;color:var(--black);}
+.deadline-warning{color:var(--danger);}
+.deadline-ok{color:var(--success);}
+
+/* PROGRESS BARS */
+.prog-wrap{margin-top:10px;}
+.prog-label{display:flex;justify-content:space-between;font-size:10px;font-weight:600;margin-bottom:4px;}
+.prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .5s;}
+.prog-fill.green{background:var(--success);}
+
+/* CHECKLIST INSIDE CARD */
+.mini-check{margin-top:12px;}
+.mc-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px;cursor:pointer;}
+.mc-box{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.mc-box.checked{background:var(--black);border-color:var(--black);color:#fff;}
+.mc-text{flex:1;transition:all .15s;}
+.mc-text.done{text-decoration:line-through;color:var(--muted);}
+
+/* CARD ACTIONS */
+.sch-actions{display:flex;gap:6px;padding:10px 18px;border-top:1px solid var(--border);background:#fff;}
+.act-btn{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border:1px solid var(--border);background:none;border-radius:3px;cursor:pointer;color:var(--sub);transition:all .15s;flex:1;}
+.act-btn:hover{border-color:var(--black);color:var(--black);}
+.act-btn.danger:hover{border-color:var(--danger);color:var(--danger);}
+
+/* TIMELINE */
+.timeline-wrap{margin-bottom:40px;}
+.tl-row{display:flex;align-items:stretch;gap:0;margin-bottom:2px;}
+.tl-month{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);width:60px;flex-shrink:0;display:flex;align-items:center;padding-right:12px;}
+.tl-bar-wrap{flex:1;display:flex;gap:4px;align-items:center;flex-wrap:wrap;}
+.tl-event{font-size:10px;font-weight:600;padding:4px 10px;border-radius:3px;white-space:nowrap;}
+
+/* NOTES */
+.notes-area{width:100%;font-family:'Inter',sans-serif;font-size:13px;border:1px solid var(--border);padding:14px 16px;border-radius:6px;resize:vertical;min-height:100px;outline:none;transition:border-color .2s;background:var(--bg);}
+.notes-area:focus{border-color:var(--black);background:#fff;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;border-radius:8px;padding:28px;}
+.modal h3{font-size:16px;font-weight:800;letter-spacing:-.3px;margin-bottom:20px;}
+.form-field{margin-bottom:16px;}
+.form-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+.form-input,.form-select{width:100%;font-family:'Inter',sans-serif;font-size:13px;padding:10px 12px;border:1px solid var(--border);border-radius:4px;outline:none;background:#fff;transition:border-color .2s;}
+.form-input:focus,.form-select:focus{border-color:var(--black);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-btns{display:flex;gap:8px;margin-top:20px;}
+.modal-save{flex:1;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px;background:var(--black);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background .15s;}
+.modal-save:hover{background:var(--accent);}
+.modal-cancel{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:12px 16px;background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--sub);}
+.modal-cancel:hover{border-color:var(--black);color:var(--black);}
+
+/* DIVIDER */
+.dv{display:flex;align-items:center;gap:14px;margin:32px 0 20px;}
+.dv::before,.dv::after{content:'';flex:1;height:1px;background:var(--border);}
+.dv span{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+
+/* PROFESSOR TRACKER */
+.prof-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:32px;}
+.prof-table thead tr{background:var(--black);color:#fff;}
+.prof-table thead th{padding:10px 14px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.prof-table tbody tr:nth-child(even){background:var(--bg);}
+.prof-table tbody tr:hover{background:#fff8f0;}
+.prof-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.resp-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;}
+.r-none{background:var(--bg);color:var(--muted);}
+.r-sent{background:#eff6ff;color:var(--blue);}
+.r-replied{background:#f0fdf4;color:var(--success);}
+.r-agreed{background:#0a0a0a;color:#fff;}
+.r-rejected{background:#fef2f2;color:var(--danger);}
+
+/* FOOTER */
+.footer{background:var(--black);color:rgba(255,255,255,.45);text-align:center;padding:28px;margin-top:48px;font-size:12px;}
+.footer strong{color:#fff;}
+
+@media(max-width:600px){
+  .wrap{padding:24px 14px;}
+  .cards{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ── SIDEBAR ── */
+.sidenav{position:fixed;top:0;left:0;bottom:0;width:236px;background:#0a0a0a;overflow-y:auto;z-index:300;padding:20px 0;transform:translateX(-100%);transition:transform .3s;display:flex;flex-direction:column;}
+.sidenav.open{transform:none;}
+.sn-logo{padding:0 18px 18px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:12px;}
+.sn-logo .sn-brand{font-size:13px;font-weight:700;color:#fff;}
+.sn-logo .sn-brand em{font-style:normal;color:#d4790a;}
+.sn-logo .sn-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;display:block;}
+.sn-section-label{font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.2);padding:8px 18px 4px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 18px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);border-left:2px solid transparent;transition:all .15s;cursor:pointer;user-select:none;}
+.ni:hover,.ni.active{color:#fff;border-left-color:#d4790a;background:rgba(255,255,255,.04);}
+.ni-n{font-size:9px;font-weight:700;color:#d4790a;width:16px;flex-shrink:0;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:299;}
+.overlay.open{display:block;}
+.menu-btn{font-size:11px;font-weight:700;letter-spacing:.5px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:4px;cursor:pointer;transition:background .15s;}
+.menu-btn:hover{background:rgba(255,255,255,.2);}
+
+/* ══ MASTERPLAN SECTIONS — clean unified style ══ */
+.masterplan-sections{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* ── Section wrapper ── */
+.masterplan-sections .sec{
+  max-width:100%;padding:52px 0;
+  border-bottom:1px solid var(--border);
+}
+.masterplan-sections .sec:last-child{border-bottom:none;}
+
+/* ── Section typography ── */
+.masterplan-sections .s-pre{
+  font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:8px;
+}
+.masterplan-sections .s-h{
+  font-size:22px;font-weight:800;letter-spacing:-.8px;
+  line-height:1.15;margin-bottom:8px;color:var(--black);
+}
+.masterplan-sections .s-intro{
+  font-size:13px;color:var(--sub);line-height:1.8;
+  max-width:640px;margin-bottom:32px;border-left:3px solid var(--border);
+  padding-left:14px;
+}
+.masterplan-sections h3.sh3{
+  font-size:12px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);
+  margin:28px 0 12px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── Callout boxes ── */
+.masterplan-sections .cl{
+  background:#fff8f0;border:1px solid #ffd9a8;
+  border-left:3px solid var(--accent);
+  padding:14px 18px;margin:20px 0;border-radius:6px;
+  font-size:12px;color:var(--ink);line-height:1.75;
+}
+.masterplan-sections .cl strong{color:var(--accent);}
+.masterplan-sections .cl-blue{background:#f0f5ff;border-color:#c7d7fe;border-left-color:var(--blue);color:#1e3a5f;}
+.masterplan-sections .cl-green{background:#f0fdf4;border-color:#bbf7d0;border-left-color:var(--success);color:#14532d;}
+.masterplan-sections .cl-red{background:#fef2f2;border-color:#fecaca;border-left-color:var(--danger);color:#7f1d1d;}
+
+/* ── TABLES ── */
+.masterplan-sections .tw{
+  overflow-x:auto;margin:16px 0;
+  border:1px solid var(--border);border-radius:6px;
+}
+.masterplan-sections table{
+  width:100%;border-collapse:collapse;font-size:11px;
+  min-width:600px;
+}
+.masterplan-sections thead tr{background:var(--black);}
+.masterplan-sections thead th{
+  padding:10px 12px;text-align:left;color:#fff;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  white-space:nowrap;
+}
+.masterplan-sections tbody tr{background:#fff;}
+.masterplan-sections tbody tr:nth-child(even){background:var(--bg);}
+.masterplan-sections tbody tr:hover{background:#fff8f0;}
+.masterplan-sections tbody td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  vertical-align:top;line-height:1.55;font-size:11px;color:var(--ink);
+}
+.masterplan-sections tbody tr:last-child td{border-bottom:none;}
+
+/* ── Tag pills ── */
+.masterplan-sections .tag{
+  display:inline-block;font-size:8px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 6px;border-radius:99px;white-space:nowrap;
+}
+.masterplan-sections .tg{background:#dcfce7;color:#16a34a;}
+.masterplan-sections .ta{background:#fff4e8;color:#d4790a;}
+.masterplan-sections .tr{background:#fef2f2;color:#dc2626;}
+.masterplan-sections .tb{background:#eff6ff;color:#1d4ed8;}
+
+/* ── CARD GRID ── */
+.masterplan-sections .cg{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:10px;margin:16px 0;
+}
+.masterplan-sections .card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:6px;padding:16px 18px;
+}
+.masterplan-sections .ca{border-top:2px solid var(--accent);}
+.masterplan-sections .c-lbl{
+  font-size:8px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px;
+}
+.masterplan-sections .c-ttl{
+  font-size:12px;font-weight:700;letter-spacing:-.1px;
+  margin-bottom:5px;color:var(--black);
+}
+.masterplan-sections .c-bdy{
+  font-size:11px;color:var(--sub);line-height:1.7;
+}
+
+/* ── TIMELINE ── */
+.masterplan-sections .tl{position:relative;padding-left:24px;margin:20px 0;}
+.masterplan-sections .tl::before{
+  content:'';position:absolute;left:5px;top:6px;bottom:6px;
+  width:1px;background:var(--border);
+}
+.masterplan-sections .tli{position:relative;padding-bottom:22px;}
+.masterplan-sections .tli:last-child{padding-bottom:0;}
+.masterplan-sections .tld{
+  position:absolute;left:-21px;top:5px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);border:2px solid #fff;
+  box-shadow:0 0 0 1px var(--accent);
+}
+.masterplan-sections .tl-lbl{
+  font-size:8px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:3px;
+}
+.masterplan-sections .tl-t{
+  font-size:12px;font-weight:700;margin-bottom:3px;color:var(--black);
+}
+.masterplan-sections .tl-b{
+  font-size:11px;color:var(--sub);line-height:1.65;
+}
+
+/* ── CHECKLIST ── */
+.masterplan-sections .ck{list-style:none;padding:0;margin:16px 0;}
+.masterplan-sections .ck li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+  font-size:12px;color:var(--ink);line-height:1.6;
+}
+.masterplan-sections .ck li:last-child{border-bottom:none;}
+.masterplan-sections .ck-ico{
+  width:20px;height:20px;background:var(--black);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;flex-shrink:0;margin-top:1px;font-weight:700;
+}
+
+/* ── SEMESTER GRID ── */
+.masterplan-sections .sg{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:10px;margin:18px 0;
+}
+.masterplan-sections .sc{
+  border:1px solid var(--border);border-radius:6px;overflow:hidden;
+}
+.masterplan-sections .sh{
+  background:var(--black);color:#fff;
+  padding:10px 14px;display:flex;
+  align-items:center;justify-content:space-between;
+}
+.masterplan-sections .sh-t{font-size:11px;font-weight:700;}
+.masterplan-sections .sh-b{
+  font-size:8px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--accent);
+}
+.masterplan-sections .sb{padding:12px 14px;background:var(--bg);}
+.masterplan-sections .si{
+  font-size:11px;color:var(--ink);padding:4px 0;
+  display:flex;gap:6px;align-items:flex-start;
+  border-bottom:1px solid var(--border);line-height:1.5;
+}
+.masterplan-sections .si:last-child{border-bottom:none;}
+.masterplan-sections .si::before{
+  content:'\2192';color:var(--accent);flex-shrink:0;font-size:10px;margin-top:1px;
+}
+
+/* ── DIVIDER ── */
+.masterplan-sections .dv{
+  display:flex;align-items:center;gap:12px;
+  margin:28px 0 20px;
+}
+.masterplan-sections .dv::before,
+.masterplan-sections .dv::after{content:'';flex:1;height:1px;background:var(--border);}
+.masterplan-sections .dv span{
+  font-size:8px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap;
+}
+
+/* ── CODE BLOCK ── */
+.masterplan-sections .cb{
+  background:#0a0a0a;color:#e2e8f0;
+  border-radius:6px;padding:14px 16px;
+  font-family:'Courier New',monospace;
+  font-size:11px;line-height:1.7;margin:12px 0;overflow-x:auto;
+}
+.masterplan-sections .cb .ac{color:#d4790a;}
+.masterplan-sections .cb .cm{color:#475569;}
+
+/* ── RATING BARS ── */
+.masterplan-sections .rb{display:flex;align-items:center;gap:10px;margin:6px 0;}
+.masterplan-sections .rl{font-size:12px;font-weight:500;width:170px;flex-shrink:0;color:var(--ink);}
+.masterplan-sections .rbar{flex:1;height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+.masterplan-sections .rf{height:100%;background:var(--accent);border-radius:99px;}
+.masterplan-sections .rn{font-size:11px;font-weight:700;color:var(--accent);width:26px;text-align:right;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .masterplan-sections{padding:0 14px;}
+  .masterplan-sections .cg{grid-template-columns:1fr;}
+  .masterplan-sections .sg{grid-template-columns:1fr;}
+  .masterplan-sections .sec{padding:36px 0;}
+  .masterplan-sections table{min-width:480px;}
+}
+
+/* ── READING PROGRESS ── */
+#rbar{position:fixed;top:0;left:0;right:0;height:2px;background:rgba(255,255,255,.1);z-index:400;}
+#rfill{height:100%;background:#d4790a;width:0%;transition:width .1s;}
+
+</style>
+</head>
+<body id="top">
+
+<div id="rbar"><div id="rfill"></div></div>
+<div class="overlay" id="overlay" onclick="toggleNav()"></div>
+<nav class="sidenav" id="sidenav">
+  <div class="sn-logo">
+    <div class="sn-brand">AL MUKIT<em>-LAB</em></div>
+    <span class="sn-sub">Scholarship Tracker + Masterplan</span>
+  </div>
+  <div class="sn-section-label">Tracker</div>
+  <div class="ni" onclick="navTo('top')"><span class="ni-n">&#9679;</span>Dashboard</div>
+  <div class="ni" onclick="navTo('scholarships-section')"><span class="ni-n">&#9679;</span>Scholarships</div>
+  <div class="ni" onclick="navTo('professors-section')"><span class="ni-n">&#9679;</span>Professor Contacts</div>
+  <div class="ni" onclick="navTo('timeline-section')"><span class="ni-n">&#9679;</span>Timeline</div>
+  <div class="ni" onclick="navTo('notes-section')"><span class="ni-n">&#9679;</span>Strategy Notes</div>
+  <div class="sn-section-label" style="margin-top:8px;">Masterplan</div>
+  <div class="ni" onclick="navTo('s1')"><span class="ni-n">01</span>Global Strategy</div>
+  <div class="ni" onclick="navTo('s2')"><span class="ni-n">02</span>University Mapping</div>
+  <div class="ni" onclick="navTo('s3')"><span class="ni-n">03</span>Scholarship Roadmap</div>
+  <div class="ni" onclick="navTo('s4')"><span class="ni-n">04</span>4-Year Masterplan</div>
+  <div class="ni" onclick="navTo('s5')"><span class="ni-n">05</span>Portfolio Strategy</div>
+  <div class="ni" onclick="navTo('s6')"><span class="ni-n">06</span>Computational Design</div>
+  <div class="ni" onclick="navTo('s7')"><span class="ni-n">07</span>Research Strategy</div>
+  <div class="ni" onclick="navTo('s8')"><span class="ni-n">08</span>Competition Strategy</div>
+  <div class="ni" onclick="navTo('s9')"><span class="ni-n">09</span>Professor Contact</div>
+  <div class="ni" onclick="navTo('s10')"><span class="ni-n">10</span>English &amp; Interview</div>
+  <div class="ni" onclick="navTo('s11')"><span class="ni-n">11</span>Reading &amp; Theory</div>
+  <div class="ni" onclick="navTo('s12')"><span class="ni-n">12</span>Reality Check</div>
+  <div class="ni" onclick="navTo('s13')"><span class="ni-n">13</span>Final Master Strategy</div>
+</nav>
+
+
+<div class="topbar">
+  <div class="topbar-logo">AL MUKIT<span>-LAB</span> &nbsp;&middot;&nbsp; Scholarship Tracker</div>
+  <button class="menu-btn" onclick="toggleNav()">&#9776; Menu</button>
+  <div class="topbar-right">Tausif Al Mukit &nbsp;&middot;&nbsp; BUET L2T2 &nbsp;&middot;&nbsp; Target: Fully Funded MS/PhD</div>
+</div>
+
+<div class="wrap">
+
+  <!-- STATS -->
+  <div class="stats" id="stats-row"></div>
+
+  <!-- SCHOLARSHIPS -->
+  <div id="scholarships-section" class="sec-head">
+    <div><div class="sec-label">Applications</div><div class="sec-title">Scholarship Tracker</div></div>
+    <button class="add-btn" onclick="openModal()">+ Add Scholarship</button>
+  </div>
+  <div class="cards" id="cards-container"></div>
+
+  <!-- PROFESSOR CONTACT -->
+  <div class="dv"><span>Professor Contact Log</span></div>
+  <div id="professors-section" class="sec-head">
+    <div><div class="sec-label">Networking</div><div class="sec-title">Professor Contacts</div></div>
+    <button class="add-btn" onclick="openProfModal()">+ Add Professor</button>
+  </div>
+  <table class="prof-table" id="prof-table">
+    <thead><tr>
+      <th>Professor</th><th>University</th><th>Country</th><th>Research Area</th><th>Emailed</th><th>Status</th><th>Notes</th><th></th>
+    </tr></thead>
+    <tbody id="prof-body"></tbody>
+  </table>
+
+  <!-- TIMELINE -->
+  <div class="dv"><span>Application Timeline</span></div>
+  <div id="timeline-section" class="sec-head">
+    <div><div class="sec-label">Overview</div><div class="sec-title">Deadline Calendar</div></div>
+  </div>
+  <div class="timeline-wrap" id="timeline-wrap"></div>
+
+  <!-- NOTES -->
+  <div class="dv"><span>Strategy Notes</span></div>
+  <div id="notes-section" class="sec-head">
+    <div><div class="sec-label">Personal</div><div class="sec-title">My Notes &amp; Strategy</div></div>
+  </div>
+  <textarea class="notes-area" id="notes-area" placeholder="Write your strategy notes, reminders, or ideas here..." oninput="saveNotes()"></textarea>
+
+</div>
+
+<!-- SCHOLARSHIP MODAL -->
+<div class="modal-overlay" id="sch-modal" onclick="closeModalOutside(event,'sch-modal')">
+  <div class="modal">
+    <h3 id="modal-title">Add Scholarship</h3>
+    <input type="hidden" id="edit-id" value="">
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Scholarship Name</label><input class="form-input" id="f-name" placeholder="e.g. MEXT Japan"></div>
+      <div class="form-field"><label class="form-label">Country</label><input class="form-input" id="f-country" placeholder="e.g. Japan"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Target University</label><input class="form-input" id="f-uni" placeholder="e.g. UTokyo / Waseda"></div>
+      <div class="form-field"><label class="form-label">Deadline</label><input class="form-input" id="f-deadline" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="planning">Planning</option>
+          <option value="inprogress">In Progress</option>
+          <option value="submitted">Submitted</option>
+          <option value="accepted">Accepted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-field"><label class="form-label">Funding Coverage</label><input class="form-input" id="f-funding" placeholder="e.g. Full + ¥117,000/month"></div>
+    </div>
+    <div class="form-field"><label class="form-label">Requirements (comma separated)</label><input class="form-input" id="f-reqs" placeholder="e.g. IELTS 6.5, Research proposal, 3 reference letters"></div>
+    <div class="form-field"><label class="form-label">Notes</label><input class="form-input" id="f-notes" placeholder="Any important notes..."></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('sch-modal')">Cancel</button>
+      <button class="modal-save" onclick="saveScholarship()">Save Scholarship</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFESSOR MODAL -->
+<div class="modal-overlay" id="prof-modal" onclick="closeModalOutside(event,'prof-modal')">
+  <div class="modal">
+    <h3>Add Professor Contact</h3>
+    <input type="hidden" id="prof-edit-id" value="">
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Professor Name</label><input class="form-input" id="pf-name" placeholder="Prof. Tanaka Hiroshi"></div>
+      <div class="form-field"><label class="form-label">University</label><input class="form-input" id="pf-uni" placeholder="UTokyo"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Country</label><input class="form-input" id="pf-country" placeholder="Japan"></div>
+      <div class="form-field"><label class="form-label">Date Emailed</label><input class="form-input" id="pf-date" type="date"></div>
+    </div>
+    <div class="form-field"><label class="form-label">Research Area</label><input class="form-input" id="pf-area" placeholder="e.g. Computational design, climate-responsive architecture"></div>
+    <div class="form-field"><label class="form-label">Status</label>
+      <select class="form-select" id="pf-status">
+        <option value="none">Not yet contacted</option>
+        <option value="sent">Email sent</option>
+        <option value="replied">Replied</option>
+        <option value="agreed">Agreed to supervise</option>
+        <option value="rejected">Not interested</option>
+      </select>
+    </div>
+    <div class="form-field"><label class="form-label">Notes</label><input class="form-input" id="pf-notes" placeholder="Key paper they wrote, follow-up date, etc."></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('prof-modal')">Cancel</button>
+      <button class="modal-save" onclick="saveProfessor()">Save Professor</button>
+    </div>
+  </div>
+</div>
+
+
+<div style="max-width:1100px;margin:0 auto;padding:48px 24px 0;">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Global Architecture Masterplan &mdash; 13 Sections</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted);text-align:center;padding-bottom:24px;">Scroll down or use the sidebar to navigate all 13 sections of your masterplan.</div>
+</div>
+<div class="masterplan-sections">
+<div class="sec" id="s1">
+  <div class="s-pre">Section 01</div>
+  <h2 class="s-h">Global Strategy</h2>
+  <p class="s-intro">Which countries are truly worth targeting, which are most realistic for BUET students, and why the single-preparation system works &mdash; with full comparison tables.</p>
+  <div class="cl"><strong>Core Strategy:</strong> Build ONE unified profile competitive everywhere &mdash; strong CGPA, English proficiency, research-oriented portfolio, one publication, and a clear design identity. Every country on your list responds to this same profile.</div>
+  <h3 class="sh3">Country Rankings by Goal</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Country</th><th>Architecture Quality</th><th>Funding Ease</th><th>Computational</th><th>Research</th><th>Realistic for BUET</th><th>Best For</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Japan</strong></td><td><span class="tag tg">World Class</span></td><td><span class="tag tg">Excellent</span></td><td><span class="tag ta">Strong</span></td><td><span class="tag tg">Very High</span></td><td><span class="tag tg">Very Realistic</span></td><td>MEXT, Lab research, Fabrication</td></tr>
+      <tr><td><strong>Germany</strong></td><td><span class="tag tg">World Class</span></td><td><span class="tag tg">Excellent</span></td><td><span class="tag tg">Leading</span></td><td><span class="tag tg">Very High</span></td><td><span class="tag tg">Realistic</span></td><td>DAAD, TU programs, Zero tuition</td></tr>
+      <tr><td><strong>Switzerland</strong></td><td><span class="tag tg">Elite #1</span></td><td><span class="tag tr">Hard</span></td><td><span class="tag tg">Leading</span></td><td><span class="tag tg">Elite</span></td><td><span class="tag ta">Hard but possible</span></td><td>ETH/EPFL Excellence grants</td></tr>
+      <tr><td><strong>Netherlands</strong></td><td><span class="tag tg">Excellent</span></td><td><span class="tag ta">Moderate</span></td><td><span class="tag tg">Very Strong</span></td><td><span class="tag ta">High</span></td><td><span class="tag ta">Moderate</span></td><td>TU Delft, Parametric design</td></tr>
+      <tr><td><strong>USA</strong></td><td><span class="tag tg">World Class</span></td><td><span class="tag ta">Competitive</span></td><td><span class="tag tg">Leading</span></td><td><span class="tag tg">Very High</span></td><td><span class="tag ta">Possible with Fulbright</span></td><td>Fulbright, GSD, SCI-Arc, MIT</td></tr>
+      <tr><td><strong>UK</strong></td><td><span class="tag tg">Very Strong</span></td><td><span class="tag tr">Hard</span></td><td><span class="tag ta">Strong</span></td><td><span class="tag ta">High</span></td><td><span class="tag tr">Expensive + Hard</span></td><td>Bartlett PhD, Chevening</td></tr>
+      <tr><td><strong>South Korea</strong></td><td><span class="tag ta">Strong</span></td><td><span class="tag tg">Excellent (GKS)</span></td><td><span class="tag ta">Growing</span></td><td><span class="tag ta">High</span></td><td><span class="tag tg">Very Realistic</span></td><td>GKS Scholarship, Seoul/KAIST</td></tr>
+      <tr><td><strong>China</strong></td><td><span class="tag ta">Good</span></td><td><span class="tag tg">Very Easy (CSC)</span></td><td><span class="tag ta">Growing</span></td><td><span class="tag ta">Moderate</span></td><td><span class="tag tg">Easiest fully funded</span></td><td>CSC Scholarship, Tsinghua</td></tr>
+      <tr><td><strong>Singapore</strong></td><td><span class="tag tg">Excellent</span></td><td><span class="tag ta">Moderate</span></td><td><span class="tag tg">Strong</span></td><td><span class="tag tg">High</span></td><td><span class="tag ta">Competitive</span></td><td>NUS/NTU RAs, Sustainability</td></tr>
+    </tbody>
+  </table></div>
+  <h3 class="sh3">Education System Comparison</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Country</th><th>Duration</th><th>System</th><th>Language</th><th>Tuition</th><th>Focus</th><th>Key Difference</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Japan</strong></td><td>2yr M + 3yr PhD</td><td>Lab-based</td><td>Japanese/English</td><td>&yen;535,800/yr</td><td>Research-heavy</td><td>Professor&ndash;student relationship is central. Lab acceptance = admission.</td></tr>
+      <tr><td><strong>Germany</strong></td><td>2yr M</td><td>Seminar + Studio</td><td>German (some EN)</td><td>&euro;0&ndash;300/sem</td><td>50 / 50</td><td>Zero tuition. Strong welfare. TU Berlin/Munich have English MSc programs.</td></tr>
+      <tr><td><strong>Switzerland</strong></td><td>2yr MArch</td><td>Studio-research hybrid</td><td>English (ETH/EPFL)</td><td>CHF 730/sem</td><td>Equal</td><td>Most competitive admissions globally. Exceptional portfolio required.</td></tr>
+      <tr><td><strong>Netherlands</strong></td><td>2yr M</td><td>Research + Design</td><td>English</td><td>&euro;2k&ndash;17k/yr</td><td>Research strong</td><td>TU Delft is world leader in sustainable + computational architecture.</td></tr>
+      <tr><td><strong>USA</strong></td><td>3yr MArch / 2yr M.Arch II</td><td>Studio-critical</td><td>English</td><td>$40k&ndash;70k/yr</td><td>Design-heavy</td><td>TA/RA/Fellowship paths exist. Fulbright covers everything.</td></tr>
+      <tr><td><strong>UK</strong></td><td>1&ndash;2yr M</td><td>Project + Thesis</td><td>English</td><td>&pound;20k&ndash;32k/yr</td><td>Design-heavy</td><td>RIBA Part 2. Very expensive. Chevening competitive.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cl cl-green"><strong>Recommended priority order:</strong><br>
+  1. <strong>Japan (MEXT)</strong> &mdash; Most accessible fully funded path. Start professor contact in L3T1.<br>
+  2. <strong>Germany (DAAD)</strong> &mdash; Zero tuition + monthly stipend. Start DAAD prep in L3T2.<br>
+  3. <strong>South Korea (GKS)</strong> &mdash; Very high acceptance for South Asian students. Run simultaneously with Japan.<br>
+  4. <strong>Netherlands (TU Delft)</strong> &mdash; Best computational architecture globally. Apply with strong portfolio + research interest.<br>
+  5. <strong>USA (Fulbright)</strong> &mdash; Highest prestige but hardest. Prepare from L3T2, apply in final year.<br>
+  6. <strong>ETH Zurich / EPFL</strong> &mdash; Dream target. Possible if your profile is exceptional by final year.</div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Universal Competitive Profile</div><div class="c-ttl">What Works Everywhere</div><div class="c-bdy">CGPA 3.5+ &middot; IELTS 7.0+ &middot; Portfolio with research direction &middot; At least 1 published/conference paper &middot; SOP naming specific professors &middot; 3 strong recommendation letters from research-active faculty</div></div>
+    <div class="card ca"><div class="c-lbl">Best Specialisation</div><div class="c-ttl">Opens the Most Doors</div><div class="c-bdy"><strong>Computational Design + Sustainable Architecture + Social/Urban Research.</strong> This triple intersection is valued by Japan, Germany, Netherlands, USA, and Switzerland simultaneously &mdash; the one specialisation that makes a single profile work for every country.</div></div>
+    <div class="card ca"><div class="c-lbl">The Research Advantage</div><div class="c-ttl">Why Research Changes Everything</div><div class="c-bdy">Most BUET applicants apply as designers. If you come as a researcher &mdash; with a defined question, a professor already interested, and a publication &mdash; you enter a different, far less competitive applicant pool for funded positions.</div></div>
+  </div>
+</div>
+
+<!-- S2 -->
+</div>
+
+<div class="sec" id="s2">
+  <div class="s-pre">Section 02</div>
+  <h2 class="s-h">University Mapping</h2>
+  <p class="s-intro">Every major target university &mdash; what they value, fund, and want in their students, and whether you can realistically get in from BUET.</p>
+  <div class="tw"><table>
+    <thead><tr><th>University</th><th>Country</th><th>Tuition</th><th>Funding</th><th>Main Strength</th><th>Values</th><th>BUET Realistic?</th><th>Portfolio Type</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ETH Zurich</strong></td><td>Switzerland</td><td>CHF 1,460/yr</td><td><span class="tag ta">Excellence Scholarship</span></td><td>Computational, Fabrication, Theory</td><td>Both equally</td><td><span class="tag ta">Hard &mdash; possible</span></td><td>Conceptual + Technical, 20pp</td></tr>
+      <tr><td><strong>TU Delft</strong></td><td>Netherlands</td><td>&euro;18,750/yr</td><td><span class="tag ta">TU Delft Excellence</span></td><td>Sustainable, Urban, Computational</td><td>Research</td><td><span class="tag tg">Yes &mdash; with research focus</span></td><td>Research-oriented, diagram-heavy</td></tr>
+      <tr><td><strong>Harvard GSD</strong></td><td>USA</td><td>$60,000/yr</td><td><span class="tag ta">Need-based grants</span></td><td>Critical theory, Urban, Landscape</td><td>Design + Ideas</td><td><span class="tag tr">Very hard without Fulbright</span></td><td>Conceptual, 20 works</td></tr>
+      <tr><td><strong>MIT</strong></td><td>USA</td><td>$60,000/yr</td><td><span class="tag tg">RA/TA (PhD funded)</span></td><td>Technology, Sustainability, Research</td><td>Research (PhD)</td><td><span class="tag ta">PhD possible with professor</span></td><td>Technical + research proposal</td></tr>
+      <tr><td><strong>TU Berlin</strong></td><td>Germany</td><td>&euro;0&ndash;300/sem</td><td><span class="tag tg">DAAD + free tuition</span></td><td>Urban, Sustainable, History</td><td>Research</td><td><span class="tag tg">Yes &mdash; strong fit</span></td><td>Research + design portfolio</td></tr>
+      <tr><td><strong>TU Munich (TUM)</strong></td><td>Germany</td><td>&euro;0</td><td><span class="tag tg">DAAD + free tuition</span></td><td>Digital fabrication, Computational</td><td>Both</td><td><span class="tag tg">Yes</span></td><td>Technical + computational</td></tr>
+      <tr><td><strong>Bauhaus-Weimar</strong></td><td>Germany</td><td>&euro;0</td><td><span class="tag tg">DAAD</span></td><td>Design research, Media, Theory</td><td>Research + concept</td><td><span class="tag tg">Yes</span></td><td>Conceptual + research</td></tr>
+      <tr><td><strong>UTokyo</strong></td><td>Japan</td><td>&yen;535,800/yr</td><td><span class="tag tg">MEXT covers all</span></td><td>Urban, Structures, Theory</td><td>Research</td><td><span class="tag ta">Competitive but realistic</span></td><td>Research proposal + drawings</td></tr>
+      <tr><td><strong>Waseda University</strong></td><td>Japan</td><td>&yen;535,800/yr</td><td><span class="tag tg">MEXT covers all</span></td><td>Urban design, Sustainability</td><td>Research</td><td><span class="tag tg">Very realistic</span></td><td>Research portfolio + proposal</td></tr>
+      <tr><td><strong>Kyoto University</strong></td><td>Japan</td><td>&yen;535,800/yr</td><td><span class="tag tg">MEXT</span></td><td>Traditional + computational integration</td><td>Research</td><td><span class="tag tg">Realistic</span></td><td>Research-forward</td></tr>
+      <tr><td><strong>KAIST / SNU</strong></td><td>South Korea</td><td>&#8361;0 (GKS)</td><td><span class="tag tg">GKS fully funded</span></td><td>Computational, Tech, Sustainability</td><td>Research</td><td><span class="tag tg">Very realistic</span></td><td>Research portfolio</td></tr>
+      <tr><td><strong>EPFL</strong></td><td>Switzerland</td><td>CHF 1,460/yr</td><td><span class="tag ta">EPFL Excellence</span></td><td>Engineering + Architecture, Digital</td><td>Both</td><td><span class="tag ta">Hard &mdash; worth trying</span></td><td>Technical + research</td></tr>
+      <tr><td><strong>Tsinghua</strong></td><td>China</td><td>CNY 0 (CSC)</td><td><span class="tag tg">CSC fully funded</span></td><td>Urban, History, Sustainability</td><td>Both</td><td><span class="tag tg">Easiest fully funded path</span></td><td>Design + brief statement</td></tr>
+      <tr><td><strong>NUS / NTU</strong></td><td>Singapore</td><td>SGD 0 (RA/TA)</td><td><span class="tag ta">Research Assistantship</span></td><td>Tropical, Urban, Sustainability</td><td>Research</td><td><span class="tag tg">Yes &mdash; strong regional fit</span></td><td>Research-focused</td></tr>
+      <tr><td><strong>UCL Bartlett</strong></td><td>UK</td><td>&pound;28,000/yr</td><td><span class="tag tr">Limited</span></td><td>Research, Technology, MPhil/PhD</td><td>Research (PhD)</td><td><span class="tag ta">PhD possible with supervisor</span></td><td>Research + portfolio</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cl cl-blue"><strong>Key insight:</strong> For BUET students, the most realistic fully-funded path is Japan (MEXT) &rarr; Germany (DAAD/free tuition) &rarr; South Korea (GKS) &rarr; Singapore (RA). ETH, Harvard, and Columbia are possible but require a near-perfect profile. Always apply to 2&ndash;3 realistic targets alongside 1&ndash;2 stretch targets.</div>
+  <h3 class="sh3">How to Crack Each Portfolio Type</h3>
+  <div class="tw"><table>
+    <thead><tr><th>School Type</th><th>What They Want</th><th>Biggest Mistake</th><th>How to Win</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Research universities (Japan, Germany, Delft)</strong></td><td>Clear research question behind every project. Diagrams showing analysis. Evidence of intellectual curiosity.</td><td>Showing only beautiful renders with no analytical depth</td><td>Every project has a 2-line research question. Show process diagrams, not just final images.</td></tr>
+      <tr><td><strong>Design schools (Harvard GSD, Columbia)</strong></td><td>Bold design vision. Conceptual originality. Risk-taking. A clear design voice.</td><td>Safe, conventional projects that solve problems but take no intellectual position</td><td>Choose 3 projects that all reveal the same provocative design intelligence. Quality over safety.</td></tr>
+      <tr><td><strong>Computational programs (ETH, TUM)</strong></td><td>Grasshopper/parametric work. Understanding of algorithmic design logic. Technical depth.</td><td>Using computational tools for rendering only &mdash; not for generating design</td><td>Show a parametric project where the algorithm IS the concept. Document the logic, not just the output.</td></tr>
+      <tr><td><strong>Sustainability programs (Delft, Stuttgart)</strong></td><td>Environmental performance data. Simulation outputs. Evidence-based design decisions.</td><td>Claiming sustainability without showing data</td><td>Include Ladybug solar/wind analysis outputs. Show how simulation influenced form.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S3 -->
+</div>
+
+<div class="sec" id="s3">
+  <div class="s-pre">Section 03</div>
+  <h2 class="s-h">Full Scholarship Roadmap</h2>
+  <p class="s-intro">Every major scholarship &mdash; eligibility, timeline, what they actually want, and how to win them. Plus the paper publication timeline.</p>
+  <div class="dv"><span>MEXT &mdash; Japan</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">MEXT Embassy Route</div><div class="c-ttl">Japan MEXT Scholarship</div><div class="c-bdy"><strong>Coverage:</strong> Tuition + &yen;117,000&ndash;144,000/month + airfare<br><strong>GPA:</strong> 3.0+ (65%+ at BUET)<br><strong>IELTS:</strong> Not strictly required &mdash; 6.5+ recommended<br><strong>Apply:</strong> April&ndash;June of final year<br><strong>Acceptance rate:</strong> ~5&ndash;10% embassy; much higher via university nomination route<br><br><strong>Strategy:</strong> Contact professors BEFORE the embassy application. A professor who agrees to supervise you makes your acceptance probability multiply dramatically.</div></div>
+    <div class="card ca"><div class="c-lbl">MEXT University Route (Higher Success)</div><div class="c-ttl">Professor-First Strategy</div><div class="c-bdy"><strong>Step 1:</strong> Research Japanese labs aligned with your interests (L3T1)<br><strong>Step 2:</strong> Email specific professors with 2-page research proposal (L3T2)<br><strong>Step 3:</strong> Professor agrees to supervise &rarr; nominates you for MEXT<br><strong>Step 4:</strong> Far higher success rate than embassy-only<br><br><strong>Timeline:</strong> Start professor contact 18 months before target intake.</div></div>
+  </div>
+  <div class="dv"><span>DAAD &mdash; Germany</span></div>
+  <div class="cg">
+    <div class="card"><div class="c-lbl">DAAD Research Grant</div><div class="c-ttl">Germany &mdash; DAAD</div><div class="c-bdy"><strong>Coverage:</strong> &euro;934/month + tuition waiver (most German universities = zero tuition)<br><strong>GPA:</strong> First class &mdash; 3.5+<br><strong>IELTS:</strong> 6.5+ English OR German B2+<br><strong>Apply:</strong> October&ndash;November for following year<br><strong>What they want:</strong> Clear research proposal, letter from German host professor, academic excellence</div></div>
+    <div class="card"><div class="c-lbl">German Programs to Target</div><div class="c-ttl">TU Berlin / TUM / Bauhaus</div><div class="c-bdy">TU Berlin: Urban Design MSc (English available)<br>TU Munich: Architecture MSc<br>Stuttgart ILEK: Computational + Structural Design<br>Bauhaus-Weimar: Excellent for design research<br><br><strong>Key:</strong> Even without DAAD stipend, zero tuition + 20hr/week part-time work = survivable. DAAD makes it comfortable.</div></div>
+  </div>
+  <div class="dv"><span>Fulbright, GKS, ETH Excellence &amp; All Others</span></div>
+  <div class="tw"><table>
+    <thead><tr><th>Scholarship</th><th>Country</th><th>Coverage</th><th>GPA</th><th>Apply When</th><th>Difficulty</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fulbright</strong></td><td>USA</td><td>Full tuition + living + airfare + health</td><td>3.7+</td><td>Feb&ndash;Apr of final year</td><td><span class="tag tr">Very Hard &mdash; 3&ndash;5% in BD</span></td></tr>
+      <tr><td><strong>GKS / KGSP</strong></td><td>South Korea</td><td>Full + &#8361;900,000/month</td><td>3.0+</td><td>Sept&ndash;Nov, 2 years before</td><td><span class="tag tg">Moderate</span></td></tr>
+      <tr><td><strong>ETH Excellence</strong></td><td>Switzerland</td><td>CHF 11,200 + fee waiver</td><td>Top 5&ndash;10%</td><td>November</td><td><span class="tag tr">Very Hard</span></td></tr>
+      <tr><td><strong>EPFL Excellence</strong></td><td>Switzerland</td><td>CHF 15,000/yr</td><td>Top 5%</td><td>December</td><td><span class="tag tr">Very Hard</span></td></tr>
+      <tr><td><strong>Erasmus Mundus</strong></td><td>Europe</td><td>&euro;1,400/month + tuition</td><td>3.3+</td><td>January each year</td><td><span class="tag ta">Hard</span></td></tr>
+      <tr><td><strong>CSC (China)</strong></td><td>China</td><td>Full + CNY 3,000/month</td><td>2.8+</td><td>March&ndash;April</td><td><span class="tag tg">Easiest full funding</span></td></tr>
+      <tr><td><strong>NUS Research Scholarship</strong></td><td>Singapore</td><td>Full + SGD 2,000/month</td><td>3.5+</td><td>October&ndash;December</td><td><span class="tag ta">Moderate&ndash;Hard</span></td></tr>
+      <tr><td><strong>Commonwealth Masters</strong></td><td>UK</td><td>Full funding</td><td>3.5+</td><td>December</td><td><span class="tag ta">Hard</span></td></tr>
+      <tr><td><strong>RA / TA (USA)</strong></td><td>USA</td><td>Tuition + $18&ndash;22k/yr</td><td>3.7+</td><td>December&ndash;January</td><td><span class="tag ta">Hard but direct</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="dv"><span>Paper Publication Timeline</span></div>
+  <div class="cl cl-blue"><strong>When to start:</strong> Have your first conference paper submitted by <strong>L3T2</strong> and accepted by <strong>L4T1</strong>. A peer-reviewed journal paper before graduation transforms your applications. Start your literature review this semester &mdash; now.</div>
+  <div class="tl">
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">L2T2 &mdash; Now</div><div class="tl-t">Choose research topic + find BUET faculty mentor</div><div class="tl-b">Choose one specific topic at the intersection of your design interests and a researchable question. Find a BUET faculty member and ask to assist in their research. This begins your research training immediately.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">L3T1</div><div class="tl-t">Literature review + write first conference abstract</div><div class="tl-b">Read 20&ndash;30 papers on your topic. Write a 2,000-word literature review. Submit a 300-word abstract to a regional conference (BAPA, ARCASIA, ISUF). Conference papers are easier than journals and count strongly on your CV.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">L3T2</div><div class="tl-t">Write and submit full conference paper (4,000&ndash;6,000 words)</div><div class="tl-b">Co-author with your BUET supervisor. Target: PLEA (Passive Low Energy Architecture), ARCC, CAADRIA (computational, Asia). Getting accepted = publishable on your CV immediately.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">L4T1</div><div class="tl-t">Expand conference paper into journal submission</div><div class="tl-b">Target: Archnet-IJAR (open access, regional), Frontiers in Built Environment, International Journal of Architectural Research. Even &ldquo;under review&rdquo; status is impressive in scholarship applications.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">L4T2 / Final Year</div><div class="tl-t">Thesis as proto-dissertation + second paper</div><div class="tl-b">Frame your final-year thesis as the first chapter of a PhD dissertation. By graduation: 1 published conference paper + 1 journal submission + thesis with research methodology. This profile is exceptional from any institution.</div></div>
+  </div>
+</div>
+
+<!-- S4 -->
+</div>
+
+<div class="sec" id="s4">
+  <div class="s-pre">Section 04</div>
+  <h2 class="s-h">4+ Year Masterplan</h2>
+  <p class="s-intro">A complete semester-by-semester roadmap from L2T2 to graduation and scholarship application season &mdash; with daily, weekly, and monthly habits.</p>
+  <div class="sg">
+    <div class="sc"><div class="sh"><div class="sh-t">L2T2 &mdash; NOW</div><div class="sh-b">Foundation</div></div><div class="sb">
+      <div class="si">Maintain CGPA &mdash; aim for 3.5+ every term</div>
+      <div class="si">Start Rhino + Grasshopper basics (1 hr/day)</div>
+      <div class="si">Read: Experiencing Architecture + Atmospheres</div>
+      <div class="si">Choose 1 specific research interest area</div>
+      <div class="si">Start IELTS vocabulary (30 words/day)</div>
+      <div class="si">Find a BUET faculty research mentor</div>
+      <div class="si">Open Behance &mdash; build online presence</div>
+      <div class="si">Attend 1 architecture event per month</div>
+    </div></div>
+    <div class="sc"><div class="sh"><div class="sh-t">L3T1</div><div class="sh-b">Skill Building</div></div><div class="sb">
+      <div class="si">Rhino + Grasshopper intermediate level</div>
+      <div class="si">Begin literature review on research topic</div>
+      <div class="si">Submit conference abstract (BAPA/ARCASIA)</div>
+      <div class="si">Start IELTS prep seriously (target 7.0)</div>
+      <div class="si">Read: Frampton Critical History + Venturi</div>
+      <div class="si">Map target professors in Japan + Germany</div>
+      <div class="si">Enter 1 international design competition</div>
+      <div class="si">Build first portfolio project with research angle</div>
+      <div class="si">Start Blender (atmospheric rendering)</div>
+    </div></div>
+    <div class="sc"><div class="sh"><div class="sh-t">L3T2</div><div class="sh-b">Research Begins</div></div><div class="sb">
+      <div class="si">Write + submit full conference paper</div>
+      <div class="si">Take IELTS &mdash; aim for 7.0+</div>
+      <div class="si">Grasshopper advanced &mdash; first parametric project</div>
+      <div class="si">First cold emails to 3 Japanese professors</div>
+      <div class="si">First cold emails to 3 German professors</div>
+      <div class="si">Portfolio: 2 strong research-grounded projects</div>
+      <div class="si">Attend MEXT briefing at Bangladesh Embassy</div>
+      <div class="si">Read: A Pattern Language + Death/Life of Cities</div>
+      <div class="si">Enter Archiprix / UIA student competition</div>
+    </div></div>
+    <div class="sc"><div class="sh"><div class="sh-t">L4T1</div><div class="sh-b">Applications Begin</div></div><div class="sb">
+      <div class="si">Conference paper published / accepted</div>
+      <div class="si">IELTS retake if needed &mdash; target 7.5</div>
+      <div class="si">Research proposal draft for MEXT/DAAD</div>
+      <div class="si">Portfolio: 4 strong projects + digital identity</div>
+      <div class="si">Professor responses &mdash; follow up, refine proposals</div>
+      <div class="si">DAAD application opens &mdash; prepare all documents</div>
+      <div class="si">GKS scholarship prep begins</div>
+      <div class="si">Learn Ladybug/Honeybee environmental simulation</div>
+      <div class="si">Ask professors for recommendation letters early</div>
+    </div></div>
+    <div class="sc"><div class="sh"><div class="sh-t">L4T2</div><div class="sh-b">Peak Applications</div></div><div class="sb">
+      <div class="si">MEXT Embassy application (April&ndash;June)</div>
+      <div class="si">DAAD application submission (Oct&ndash;Nov)</div>
+      <div class="si">GKS application (Sept&ndash;Nov)</div>
+      <div class="si">TU Delft / ETH application (Nov&ndash;Jan)</div>
+      <div class="si">Fulbright preparation begins</div>
+      <div class="si">Thesis: frame as proto-dissertation</div>
+      <div class="si">Portfolio: 6 projects, print + digital ready</div>
+      <div class="si">Journal paper under review ideally</div>
+      <div class="si">Collect all 3 recommendation letters</div>
+      <div class="si">Mock interviews: MEXT, DAAD, Fulbright</div>
+    </div></div>
+    <div class="sc"><div class="sh"><div class="sh-t">Final Year (L5)</div><div class="sh-b">Thesis + Results</div></div><div class="sb">
+      <div class="si">Fulbright Bangladesh application (Feb&ndash;April)</div>
+      <div class="si">US university applications (Dec&ndash;Jan)</div>
+      <div class="si">Thesis: research-framed, internationally relevant</div>
+      <div class="si">Second paper from thesis findings</div>
+      <div class="si">Portfolio: final version, 8 projects total</div>
+      <div class="si">Scholarship interviews + notifications</div>
+      <div class="si">Accept best offer / plan departure</div>
+      <div class="si">Graduate with First Class / CGPA 3.7+</div>
+    </div></div>
+  </div>
+  <div class="dv"><span>Daily, Weekly &amp; Monthly Habits</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Every Day</div><div class="c-ttl">Daily Non-Negotiables</div><div class="c-bdy">06:00 &mdash; 30 min reading (theory or research paper)<br>07:00 &mdash; 30 min IELTS vocabulary / academic English<br>Evening &mdash; 45 min software practice (Rhino/GH/Blender)<br>Night &mdash; 20 min: sketch 1 spatial idea from the day<br>Before sleep &mdash; look at 1 reference building, ask: what is the concept?</div></div>
+    <div class="card ca"><div class="c-lbl">Every Week</div><div class="c-ttl">Weekly Structure</div><div class="c-bdy">Monday &mdash; Software learning + studio project<br>Tuesday &mdash; Research paper reading + annotated notes<br>Wednesday &mdash; Portfolio project development<br>Thursday &mdash; Writing: SOP draft / paper / professor email<br>Friday &mdash; Competition work or experimental project<br>Saturday &mdash; Deep work block: 3&ndash;4 hrs uninterrupted<br>Sunday &mdash; Review week, plan next week, rest completely</div></div>
+    <div class="card ca"><div class="c-lbl">Every Month</div><div class="c-ttl">Monthly Milestones</div><div class="c-bdy">&rarr; 1 architecture book finished and annotated<br>&rarr; 3&ndash;5 research papers read and filed<br>&rarr; 1 portfolio project advanced or completed<br>&rarr; 1 competition entered or 1 workshop attended<br>&rarr; 1 professor inquiry email sent<br>&rarr; 1 writing piece: abstract / essay / paper draft</div></div>
+  </div>
+</div>
+
+<!-- S5: PORTFOLIO -->
+</div>
+
+<div class="sec" id="s5">
+  <div class="s-pre">Section 05</div>
+  <h2 class="s-h">Portfolio Strategy</h2>
+  <p class="s-intro">The portfolio is the most important document in your application. A weak portfolio kills strong grades. A strong portfolio rescues average grades.</p>
+  <div class="cl cl-red"><strong>Most common mistake by South Asian students:</strong> Over-designed, under-conceptualised portfolios that show rendering skills but no design thinking. Admissions committees at ETH, TU Delft, Harvard, and Japanese labs are looking for evidence of architectural intelligence &mdash; not beautiful images.</div>
+  <div class="cg">
+    <div class="card"><div class="c-ttl">A Single Clear Identity</div><div class="c-bdy">Within 10 seconds of opening, the viewer must understand what you are interested in. This is "design authorship" &mdash; a recognisable point of view that runs through every project. If they have to search for what you are about, you lose.</div></div>
+    <div class="card"><div class="c-ttl">Process Over Product</div><div class="c-bdy">Show how you think, not just what you made. The sketch that became the concept. The analysis that generated the form. The failed iteration that led to the breakthrough. Process is the evidence of intelligence.</div></div>
+    <div class="card"><div class="c-ttl">Research Depth</div><div class="c-bdy">For academic programs, every project should have a research question behind it. Not "I designed a library" but "I researched how communal reading habits in dense Dhaka inform spatial sequencing in public buildings."</div></div>
+    <div class="card"><div class="c-ttl">Technical Precision</div><div class="c-bdy">Plans, sections, and construction details must be drawn correctly and beautifully. Technical drawings are the most honest signal of architectural competence. A beautiful render means nothing if your section is structurally wrong.</div></div>
+  </div>
+  <div class="dv"><span>Complete Portfolio Structure &mdash; Page by Page</span></div>
+  <div class="tl">
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Pages 1&ndash;2</div><div class="tl-t">Introduction &mdash; Your Identity Statement</div><div class="tl-b">A single strong image + 3 sentences about who you are as an architect. Not a biography &mdash; your architectural position. What you care about, what you are researching, where you are going. Most-read part of the entire portfolio.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Pages 3&ndash;14</div><div class="tl-t">Project 1 &mdash; Your Strongest, Most Developed Work</div><div class="tl-b">Your best project gets the most space: research/concept diagram &rarr; site analysis &rarr; concept evolution &rarr; plans/sections/details &rarr; final images. Tell the complete design story. This project should demonstrate your research interest most clearly.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Pages 15&ndash;24</div><div class="tl-t">Project 2 &mdash; Shows Range or Deepens Theme</div><div class="tl-b">Either show a different scale (if Project 1 was urban, show a building; if building, show an installation) or deepen the same research theme with a different typology. Shows you are not a one-trick designer.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Pages 25&ndash;32</div><div class="tl-t">Projects 3&ndash;4 &mdash; Shorter Presentations (3&ndash;4 pages each)</div><div class="tl-b">Concept + key drawings + one final image each. These prove breadth. Cut ruthlessly &mdash; no weak work. One strong project on 4 pages is better than three mediocre projects on 12 pages.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Pages 33&ndash;36</div><div class="tl-t">Computational / Research / Sketch Work</div><div class="tl-b">Grasshopper scripts, parametric explorations, research diagrams, freehand sketches. Even 2 pages of strong hand sketches is more compelling than 8 pages of mediocre Rhino renders. Shows technical ambition and research capability.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Final page</div><div class="tl-t">CV Summary + Contact</div><div class="tl-b">One clean page. Education, key skills, publications/conferences, competitions, contact. Let the work speak &mdash; the CV is just the label on the bottle.</div></div>
+  </div>
+  <div class="dv"><span>Storytelling &mdash; What It Means and How to Do It</span></div>
+  <div class="cl cl-blue"><strong>Storytelling in portfolios</strong> means someone who has never seen your project understands it completely without you explaining it. Every page answers: <em>why does this exist?</em> The arc is: PROBLEM &rarr; RESEARCH &rarr; CONCEPT &rarr; PROPOSAL &rarr; OUTCOME &rarr; IMPLICATION. Each project is a small thesis.</div>
+  <div class="cg">
+    <div class="card"><div class="c-ttl">Step 1: Define the Problem</div><div class="c-bdy">What is broken in the world that your project responds to? Social (lack of community space in dense Dhaka), environmental (heat island), cultural (erosion of traditional building knowledge), or spatial. The problem gives your project moral purpose.</div></div>
+    <div class="card"><div class="c-ttl">Step 2: Show the Research</div><div class="c-bdy">Maps, diagrams, data, photographs, precedents. Research is evidence that you looked at the world before designing. Without it your design is just an opinion. With it your design is an argument.</div></div>
+    <div class="card"><div class="c-ttl">Step 3: The Concept Leap</div><div class="c-bdy">How did the research generate the concept? This is the most exciting part. Show it in one clear diagram. The best concept diagrams are memorable: viewers should be able to draw it from memory the next day.</div></div>
+    <div class="card"><div class="c-ttl">Step 4: Proposal + Implication</div><div class="c-bdy">Plans, sections, details answering: does this work? Can it be built? Is it spatially intelligent? Then one final sentence: what does this project mean beyond itself? This is what separates a student project from an architectural argument.</div></div>
+  </div>
+  <div class="dv"><span>10 High-Level Portfolio Project Ideas</span></div>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Project Title</th><th>Research Question</th><th>Scale</th><th>Why Powerful Internationally</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Climate Adaptive Courtyard Housing, Dhaka</strong></td><td>How can traditional Bengali courtyard typology be computationally optimised for hyper-dense Dhaka&rsquo;s thermal conditions?</td><td>Building</td><td>Vernacular + computational + climate &mdash; triple value. Relevant to Japan, Germany, Netherlands simultaneously.</td></tr>
+      <tr><td>2</td><td><strong>Buriganga Waterfront Flood-Adaptive Architecture</strong></td><td>How can the spatial logic of informal settlements along the Buriganga inform a new flood-adaptive public typology?</td><td>Urban / Building</td><td>Uses Dhaka&rsquo;s most powerful context. Strong research base. Cross-cultural interest globally.</td></tr>
+      <tr><td>3</td><td><strong>Post-Disaster Community Resilience Centre, Coastal Bangladesh</strong></td><td>What spatial strategies support psychological recovery in cyclone-affected coastal communities?</td><td>Building</td><td>Social + environmental research. Highly relevant to global development scholarship committees.</td></tr>
+      <tr><td>4</td><td><strong>Parametric Mosque &mdash; Climate Responsive Skin</strong></td><td>Can parametric design regenerate the climatic intelligence of traditional Islamic architecture in a contemporary context?</td><td>Building</td><td>Demonstrates Grasshopper skills. Cultural identity + computation. Unique perspective internationally.</td></tr>
+      <tr><td>5</td><td><strong>Dhaka Urban Acupuncture &mdash; Micro-Interventions</strong></td><td>How can a network of small spatial interventions in Dhaka&rsquo;s informal fabric trigger regenerative neighbourhood transformation?</td><td>Urban</td><td>Urban theory (Rossi, Jacobs, Koolhaas) applied to Dhaka. Strong diagrammatic potential.</td></tr>
+      <tr><td>6</td><td><strong>Living Building &mdash; Biogenic Facade System</strong></td><td>Can living material systems (bamboo, mycelium, terracotta) replace synthetic building skins in Bangladesh&rsquo;s climate?</td><td>Detail / System</td><td>Material research + sustainability. Extremely relevant for TU Delft and ETH.</td></tr>
+      <tr><td>7</td><td><strong>Digital Fabrication &mdash; Bengali Textile Patterns as Structure</strong></td><td>How can robotic fabrication encode traditional Bengali weaving patterns into structural architectural form?</td><td>Installation</td><td>Fabrication skills + cultural research. Perfect for Japan computational labs and TUM.</td></tr>
+      <tr><td>8</td><td><strong>Adaptive Reuse &mdash; Dhaka Mill Heritage</strong></td><td>How can the industrial heritage of Narayanganj mills be reactivated as cultural infrastructure?</td><td>Building</td><td>Combines heritage, adaptive reuse, social programming. Strong in Germany and Japan.</td></tr>
+      <tr><td>9</td><td><strong>Invisible City &mdash; Speculative Dhaka 2075</strong></td><td>If Dhaka continues current densification trajectories, what spatial conditions emerge and how can architecture intervene?</td><td>Speculative / Urban</td><td>Theoretical sophistication and visual imagination. Strong for USA and UK programs.</td></tr>
+      <tr><td>10</td><td><strong>River Settlement Typology &mdash; Dhaka, Bangkok, Jakarta</strong></td><td>Comparative spatial analysis of river-edge informal settlements deriving universal typological principles.</td><td>Research / Urban</td><td>Academic research project. Publishable. Shows comparative methodology. Excellent for research-focused scholarships.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="dv"><span>Visual Identity &amp; Graphic System</span></div>
+  <div class="cg">
+    <div class="card"><div class="c-ttl">Typography</div><div class="c-bdy">1&ndash;2 typefaces maximum. Inter or Aktiv Grotesk for body. A serif for project titles creates hierarchy. Font size: 8&ndash;10pt body, 14&ndash;18pt titles. Consistent baseline grid. No decorative fonts &mdash; architecture speaks through space, not fonts.</div></div>
+    <div class="card"><div class="c-ttl">Colour</div><div class="c-bdy">3-colour palette: white background + black ink + 1 accent. Use accent sparingly &mdash; diagram highlights and key labels only. Colourful portfolios look student-level. Restrained portfolios look professional. Less is always more in graphic design.</div></div>
+    <div class="card"><div class="c-ttl">Drawings</div><div class="c-bdy">Line weights: 0.1mm context, 0.25mm secondary, 0.5mm primary, 0.8mm cut lines. Shadows at 30&deg; or 45&deg;. Do not fill every section with grey. White backgrounds unless the design demands otherwise. Every drawing must be legible at 50% size.</div></div>
+    <div class="card"><div class="c-ttl">Diagrams</div><div class="c-bdy">Every diagram answers ONE question. Never show everything in one diagram. Sequence: smaller to larger scale. Axonometric diagrams are most legible. Consistent graphic language across all projects &mdash; the portfolio must feel like one mind made it.</div></div>
+  </div>
+</div>
+
+<!-- S6: COMPUTATIONAL -->
+</div>
+
+<div class="sec" id="s6">
+  <div class="s-pre">Section 06</div>
+  <h2 class="s-h">Computational Design Roadmap</h2>
+  <p class="s-intro">Computational skills are now a baseline expectation at most international programs. This is the strategic learning order &mdash; what to learn, when, and why.</p>
+  <div class="cl cl-green"><strong>Yes, this is critical for scholarships.</strong> At TU Delft, ETH, TUM, and all Japanese computational labs, demonstrating Rhino + Grasshopper competence is essentially a prerequisite for admission. It differentiates BUET applicants from the typical design-only portfolio more than anything else.</div>
+  <div class="tl">
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 1&ndash;3 &mdash; Start Now</div><div class="tl-t">Rhino + Grasshopper Fundamentals</div><div class="tl-b"><strong>Rhino:</strong> Model a building from a precedent (Zumthor, Piano, Siza). Learn viewport navigation, NURBS surfaces, boolean operations.<br><strong>Grasshopper:</strong> Points &rarr; Curves &rarr; Surfaces &rarr; Panels. Build a parametric facade from scratch.<br><strong>Key plugins:</strong> Ladybug (environmental), Weaverbird (mesh), Human UI (interface).<br><strong>Resources:</strong> Mode Lab tutorials (free), parametricarchitecture.com, Rhino course on Udemy.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 4&ndash;6</div><div class="tl-t">Blender &mdash; Architectural Visualization</div><div class="tl-b">Blender replaces V-Ray for most students. Faster, free, more powerful for atmospheric rendering.<br><strong>Learn:</strong> Cycles rendering, HDR environments, material nodes, Arch-Viz workflow, camera animation.<br><strong>Workflow:</strong> Rhino &rarr; export &rarr; Blender &rarr; atmospheric render. Now standard at most international schools.<br><strong>Resources:</strong> Blender Guru, ArchVizArtist, Maximilian Schreiber on YouTube.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 7&ndash;12</div><div class="tl-t">Ladybug + Honeybee &mdash; Environmental Simulation</div><div class="tl-b">These Grasshopper plugins allow solar analysis, wind studies, energy simulation, and daylighting analysis &mdash; extremely valuable for sustainable design research papers and for TU Delft / Germany / Japan computational labs.<br><strong>Resource:</strong> Ladybug Tools documentation, Mostapha Sadeghipour Roudsari YouTube channel.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 12&ndash;18</div><div class="tl-t">Unreal Engine 5 &mdash; Real-Time Visualization</div><div class="tl-b">UE5 (Lumen + Nanite) is becoming the standard for high-quality architectural presentation. Epic Games Architecture licence is free.<br><strong>Learn:</strong> Datasmith import from Rhino, material editor, real-time lighting, walkthrough video export. Differentiates your portfolio visually from 90% of all applicants.</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Advanced &mdash; L4 onwards</div><div class="tl-t">Houdini + AI Workflows</div><div class="tl-b"><strong>Houdini:</strong> Procedural generation, urban simulation, structural form-finding. Used at ETH, AA, Zaha Hadid Architects.<br><strong>AI tools:</strong> Midjourney for concept sketching, Stable Diffusion for rendering exploration. Use to accelerate ideation &mdash; not to generate design. The idea must still be yours.<br><strong>Digital fabrication:</strong> If BUET has a laser cutter or 3D printer &mdash; use it constantly. Physical computational models are extraordinary in portfolios.</div></div>
+  </div>
+  <h3 class="sh3">Software Value Matrix</h3>
+  <div class="rb"><div class="rl">Rhino + Grasshopper</div><div class="rbar"><div class="rf" style="width:95%"></div></div><div class="rn">9.5</div></div>
+  <div class="rb"><div class="rl">Ladybug / Honeybee</div><div class="rbar"><div class="rf" style="width:88%"></div></div><div class="rn">8.8</div></div>
+  <div class="rb"><div class="rl">Blender (Viz)</div><div class="rbar"><div class="rf" style="width:85%"></div></div><div class="rn">8.5</div></div>
+  <div class="rb"><div class="rl">Unreal Engine 5</div><div class="rbar"><div class="rf" style="width:80%"></div></div><div class="rn">8.0</div></div>
+  <div class="rb"><div class="rl">Houdini</div><div class="rbar"><div class="rf" style="width:70%"></div></div><div class="rn">7.0</div></div>
+  <div class="rb"><div class="rl">AI Tools (Midjourney)</div><div class="rbar"><div class="rf" style="width:65%"></div></div><div class="rn">6.5</div></div>
+  <div class="rb"><div class="rl">AutoCAD 2D (basic only)</div><div class="rbar"><div class="rf" style="width:45%"></div></div><div class="rn">4.5</div></div>
+  <div class="cl cl-red" style="margin-top:24px;"><strong>Skills becoming obsolete:</strong> AutoCAD 2D drafting as primary tool &middot; SketchUp as final design tool &middot; V-Ray without Rhino integration &middot; Photoshop-only presentation workflows. Do not spend time mastering these beyond basic competency.</div>
+  <div class="cg">
+    <div class="card"><div class="c-ttl">Best YouTube Channels</div><div class="c-bdy">Mode Lab (GH) &middot; Blender Guru (rendering) &middot; ArchVizArtist &middot; Mostapha Roudsari (Ladybug) &middot; ParametricHouse &middot; The Thought Emporium (fabrication) &middot; GSAPP Talks (Columbia theory) &middot; ETH Zurich public lectures &middot; GSD Talks (Harvard)</div></div>
+    <div class="card"><div class="c-ttl">Studios to Study Deeply</div><div class="c-bdy">Zaha Hadid Architects (parametric) &middot; BIG / Bjarke Ingels (diagrammatic) &middot; MVRDV (data-driven urbanism) &middot; Kengo Kuma (material + computation, great Japan entry point) &middot; Elemental / Aravena (social + computational) &middot; Herzog &amp; de Meuron (material research as concept)</div></div>
+    <div class="card"><div class="c-ttl">Best Communities</div><div class="c-bdy">Grasshopper3D.com forum &middot; ParametricHouse &middot; Food4Rhino (plugin library) &middot; Archinect student forums &middot; CAADRIA student network &middot; ResearchGate (create a profile now) &middot; LinkedIn architecture research groups &middot; Academia.edu</div></div>
+  </div>
+</div>
+
+<!-- S7: RESEARCH -->
+</div>
+
+<div class="sec" id="s7">
+  <div class="s-pre">Section 07</div>
+  <h2 class="s-h">Research Strategy</h2>
+  <p class="s-intro">How architecture students start research, how to publish, and 20 research topics aligned with your Bangladeshi context and international relevance.</p>
+  <h3 class="sh3">How to Start Research as an Undergraduate</h3>
+  <ul class="ck">
+    <li><span class="ck-ico">1</span>Choose a narrow topic &mdash; not "sustainability" but "passive cooling strategies in high-rise residential buildings in Dhaka&rsquo;s tropical monsoon climate"</li>
+    <li><span class="ck-ico">2</span>Find 20&ndash;30 existing papers using Google Scholar, ResearchGate, or Web of Science on your topic</li>
+    <li><span class="ck-ico">3</span>Write a 2,000-word literature review identifying what has been studied and what gap remains</li>
+    <li><span class="ck-ico">4</span>Identify your research question: the specific gap your work will address</li>
+    <li><span class="ck-ico">5</span>Choose a methodology: survey, CFD simulation, case study, comparative analysis, or historical analysis</li>
+    <li><span class="ck-ico">6</span>Find a BUET faculty co-author who works in this area &mdash; do not try to publish alone as an undergraduate</li>
+    <li><span class="ck-ico">7</span>Write the paper: Introduction &rarr; Literature Review &rarr; Methodology &rarr; Results &rarr; Discussion &rarr; Conclusion</li>
+    <li><span class="ck-ico">8</span>Submit to a conference first (lower barrier than journals) &rarr; use that acceptance to build credibility for journal submission</li>
+  </ul>
+  <div class="dv"><span>20 Research Topics &mdash; Your Context + International Relevance</span></div>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Research Topic</th><th>Methodology</th><th>Best For</th><th>Why Powerful</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Passive cooling performance of traditional courtyards in Dhaka&rsquo;s dense urban fabric</strong></td><td>CFD + Ladybug simulation + field measurement</td><td>Japan, Germany, Netherlands</td><td>Vernacular + computational + climate &mdash; triple value</td></tr>
+      <tr><td>2</td><td><strong>Spatial typologies of char (river island) settlements in Bangladesh</strong></td><td>Morphological mapping + typological analysis</td><td>Japan (urban labs), Germany</td><td>Unique to Bangladesh, globally underresearched</td></tr>
+      <tr><td>3</td><td><strong>Post-cyclone rebuilding patterns and community space formation, coastal Bangladesh</strong></td><td>Case study + field survey + comparative analysis</td><td>USA (Fulbright), Japan, Netherlands</td><td>Disaster + resilience &mdash; very high global interest</td></tr>
+      <tr><td>4</td><td><strong>Informal market architecture and spatial intelligence in Old Dhaka</strong></td><td>Ethnographic + morphological study</td><td>Japan, Germany</td><td>Informal urbanism is globally relevant research area</td></tr>
+      <tr><td>5</td><td><strong>Parametric optimisation of brick screen facades for solar shading in tropical climates</strong></td><td>Grasshopper + Ladybug simulation</td><td>TU Delft, ETH, Japan comp labs</td><td>Local material culture + computational tools = unique</td></tr>
+      <tr><td>6</td><td><strong>Thermal comfort perception in vernacular vs modern housing &mdash; Dhaka comparative study</strong></td><td>Survey + Post-Occupancy Evaluation (POE)</td><td>Germany, Netherlands</td><td>Evidence-based design &mdash; highly publishable methodology</td></tr>
+      <tr><td>7</td><td><strong>Spatial syntax analysis of Dhaka&rsquo;s neighbourhood morphology</strong></td><td>Space Syntax (UCL Depthmap software)</td><td>UK (UCL), Japan, Netherlands</td><td>Quantitative + spatial &mdash; strong rigorous methodology</td></tr>
+      <tr><td>8</td><td><strong>Role of urban trees in heat island mitigation &mdash; Dhaka case study</strong></td><td>GIS + remote sensing + Ladybug simulation</td><td>Germany, Netherlands, Singapore</td><td>Sustainability data is always publishable internationally</td></tr>
+      <tr><td>9</td><td><strong>Memory and place attachment in displaced communities &mdash; Rana Plaza context</strong></td><td>Phenomenological interviews + cognitive mapping</td><td>Japan (social labs), USA</td><td>Human geography + architecture = interdisciplinary strength</td></tr>
+      <tr><td>10</td><td><strong>Bamboo as structural and spatial material in contemporary Bangladeshi architecture</strong></td><td>Material testing + prototype design</td><td>All &mdash; sustainability is universal</td><td>Fabrication + sustainability + local material culture</td></tr>
+      <tr><td>11</td><td><strong>Adaptive reuse potential of colonial-era buildings in Dhaka</strong></td><td>Heritage assessment + spatial analysis</td><td>Japan, Germany, UK</td><td>Heritage + regeneration = broad international interest</td></tr>
+      <tr><td>12</td><td><strong>Digital fabrication as tool for reviving traditional Bengali craft patterns in architecture</strong></td><td>Prototype + parametric design</td><td>Japan fabrication labs, ETH, TUM</td><td>Cultural identity + digital fabrication = truly unique</td></tr>
+      <tr><td>13</td><td><strong>Urban green space equity and land value relationships in Dhaka</strong></td><td>GIS + statistical regression analysis</td><td>Netherlands, Germany, USA</td><td>Environmental justice &mdash; interdisciplinary, highly publishable</td></tr>
+      <tr><td>14</td><td><strong>Pedestrian environment quality and commercial activity &mdash; Dhaka street study</strong></td><td>Observation + survey + spatial mapping</td><td>All</td><td>Urban design + research = direct design implications</td></tr>
+      <tr><td>15</td><td><strong>AI-generated design exploration for climate-responsive form-finding</strong></td><td>Machine learning + architectural simulation</td><td>ETH, TU Delft, MIT</td><td>Cutting edge &mdash; very few South Asian architecture undergrads are doing this</td></tr>
+      <tr><td>16</td><td><strong>Roof topology and natural ventilation in low-income housing, Bangladesh</strong></td><td>CFD simulation + comparative analysis</td><td>Germany, Japan, Singapore</td><td>Low-income housing + technical methodology = high impact</td></tr>
+      <tr><td>17</td><td><strong>Comparative analysis of mosque spatial typology &mdash; Bangladesh and Japan</strong></td><td>Morphological + cultural analysis</td><td>Japan (cultural studies labs)</td><td>Positioned specifically for Japan &mdash; cross-cultural research</td></tr>
+      <tr><td>18</td><td><strong>Temporality and impermanence in Dhaka&rsquo;s street architecture</strong></td><td>Phenomenological + visual documentation</td><td>Japan, USA, UK</td><td>Philosophical depth &mdash; strong for theory-focused programs</td></tr>
+      <tr><td>19</td><td><strong>Light as design generator in sacred architecture &mdash; cross-cultural study</strong></td><td>Daylighting simulation + precedent analysis</td><td>Japan, Germany</td><td>Connects phenomenology + computational tools elegantly</td></tr>
+      <tr><td>20</td><td><strong>Walkability and mental health outcomes in Dhaka&rsquo;s residential neighbourhoods</strong></td><td>Survey + spatial mapping + statistical analysis</td><td>USA, Netherlands, Singapore</td><td>Health + urban design = rapidly growing international research area</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Target Journals for First Publication</div><div class="c-ttl">Where to Submit</div><div class="c-bdy">Archnet-IJAR (open access, high acceptance for South Asia) &middot; Frontiers in Built Environment &middot; International Journal of Architectural Research &middot; Buildings and Cities &middot; Journal of Architecture and Urbanism &middot; SPACE (Korean, English content) &middot; Architectural Science Review</div></div>
+    <div class="card ca"><div class="c-lbl">Target Conferences</div><div class="c-ttl">Where to Present First</div><div class="c-bdy">PLEA (Passive Low Energy Architecture) &mdash; annual, global &middot; ARCC (Architectural Research Centers Consortium) &middot; CAADRIA (computational, Asia-Pacific) &middot; ARCASIA (regional, strong for BUET) &middot; BAPA (Bangladesh) &mdash; good for first paper &middot; ISUF (urban form) &middot; AESOP (urban planning)</div></div>
+  </div>
+</div>
+
+<!-- S8: COMPETITION -->
+</div>
+
+<div class="sec" id="s8">
+  <div class="s-pre">Section 08</div>
+  <h2 class="s-h">Competition Strategy</h2>
+  <p class="s-intro">Competitions build your portfolio, confidence, and international visibility &mdash; but only the right ones actually matter.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Competition</th><th>Prestige</th><th>Type</th><th>CV Value</th><th>Recommended?</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Archiprix International</strong></td><td>&#9733;&#9733;&#9733;&#9733;&#9733;</td><td>Thesis project</td><td>Extremely high</td><td><span class="tag tg">Yes &mdash; enter your thesis</span></td></tr>
+      <tr><td><strong>UIA Student Competition</strong></td><td>&#9733;&#9733;&#9733;&#9733;&#9733;</td><td>Conceptual design</td><td>Very high</td><td><span class="tag tg">Yes &mdash; every 3 years, prioritise</span></td></tr>
+      <tr><td><strong>LafargeHolcim Awards</strong></td><td>&#9733;&#9733;&#9733;&#9733;&#9733;</td><td>Sustainable design</td><td>Very high</td><td><span class="tag tg">Yes &mdash; strong for sustainable portfolio</span></td></tr>
+      <tr><td><strong>CAADRIA Student Award</strong></td><td>&#9733;&#9733;&#9733;&#9733;&#9733;</td><td>Computational</td><td>Extremely high for comp. arch.</td><td><span class="tag tg">Yes &mdash; if computational focus</span></td></tr>
+      <tr><td><strong>WAF Student Award</strong></td><td>&#9733;&#9733;&#9733;&#9733;</td><td>Built / concept</td><td>Very high</td><td><span class="tag tg">Yes</span></td></tr>
+      <tr><td><strong>eVolo Skyscraper</strong></td><td>&#9733;&#9733;&#9733;&#9733;</td><td>Speculative</td><td>High if shortlisted</td><td><span class="tag tg">Yes &mdash; if you have a bold idea</span></td></tr>
+      <tr><td><strong>ACSA competitions</strong></td><td>&#9733;&#9733;&#9733;&#9733;</td><td>Design + research</td><td>High (USA-focused)</td><td><span class="tag tg">Yes &mdash; good for Fulbright applications</span></td></tr>
+      <tr><td><strong>Bee Breeders</strong></td><td>&#9733;&#9733;&#9733;</td><td>Conceptual</td><td>Moderate</td><td><span class="tag ta">Select carefully &mdash; only prestigious briefs</span></td></tr>
+      <tr><td><strong>BAPA / IAB Bangladesh</strong></td><td>&#9733;&#9733;&#9733;</td><td>Local</td><td>Good locally</td><td><span class="tag ta">Enter for local recognition + practice</span></td></tr>
+      <tr><td><strong>Archdaily competition roundups</strong></td><td>&#9733;&#9733;</td><td>Various</td><td>Low &mdash; mostly marketing</td><td><span class="tag tr">Avoid &mdash; waste of time</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="cl cl-blue"><strong>Competition strategy:</strong> Enter 1&ndash;2 major international competitions per year. A shortlisted entry in UIA or LafargeHolcim is worth more than 20 Bee Breeders certificates. Always document your process &mdash; even unplaced entries become portfolio material.</div>
+  <div class="cg">
+    <div class="card"><div class="c-ttl">First 10 Seconds</div><div class="c-bdy">Juries see hundreds of boards. One immediately legible main image + one immediately clear concept. If they have to search, you lose. The entry board is your most important design problem.</div></div>
+    <div class="card"><div class="c-ttl">Concept Originality</div><div class="c-bdy">A project that asks a genuinely new question &mdash; even imperfectly answered &mdash; beats a technically perfect project with a conventional idea every time. Take intellectual risks in competitions.</div></div>
+    <div class="card"><div class="c-ttl">Local Specificity</div><div class="c-bdy">Projects rooted in a specific local reality (Bangladesh) are more compelling internationally than projects that could be anywhere. Your context is an asset, not a limitation &mdash; it makes your work irreplaceable.</div></div>
+    <div class="card"><div class="c-ttl">Drawn Intelligence</div><div class="c-bdy">Precision drawings signal you are serious. Beautiful diagrams signal you think clearly. The combination is rare and always noticed by experienced juries. Most entries fail on both counts.</div></div>
+  </div>
+</div>
+
+<!-- S9: PROFESSOR CONTACT -->
+</div>
+
+<div class="sec" id="s9">
+  <div class="s-pre">Section 09</div>
+  <h2 class="s-h">Professor Contact Strategy</h2>
+  <p class="s-intro">The cold email to a professor is one of the most important things you can do &mdash; and most students do it completely wrong.</p>
+  <div class="cl cl-red"><strong>Most common mistake:</strong> Sending a generic email that says &ldquo;I am interested in your lab and would like to join.&rdquo; Professors receive dozens of these every week and delete them immediately. The emails that work are surgical &mdash; specific, brief, and demonstrate immediately that you have done real intellectual work.</div>
+  <div class="dv"><span>Effective Cold Email &mdash; Template</span></div>
+  <div class="cb">
+<span class="cm">// Subject: Research Inquiry &mdash; [Your specific topic] / [Name], BUET Bangladesh</span>
+
+Dear Professor [Last Name],
+
+I am writing to enquire about the possibility of joining your
+<span class="ac">[Lab Name]</span> as a graduate student for <span class="ac">[year]</span>.
+
+I am currently a <span class="ac">[year]</span>-year architecture student at BUET
+(Bangladesh University of Engineering and Technology), where my
+research focuses on <span class="ac">[your specific topic]</span>. I recently read
+your <span class="ac">[year]</span> paper &ldquo;<span class="ac">[exact paper title]</span>&rdquo;,
+particularly your argument that <span class="ac">[one specific idea in your
+own words]</span>. My current research on <span class="ac">[your topic]</span> in
+Dhaka&rsquo;s context extends this framework by <span class="ac">[one sentence
+connecting your work to theirs]</span>.
+
+I have attached a 2-page research proposal and selected portfolio
+work. I am applying for the <span class="ac">[MEXT / DAAD / direct program]</span>
+scholarship commencing <span class="ac">[year]</span> and would be honoured to
+discuss potential supervision.
+
+My CGPA is <span class="ac">[X/4.0]</span>. I recently presented at <span class="ac">[conference]</span>
+and have a paper currently under review.
+
+Thank you for your time.
+
+Sincerely, <span class="ac">[Your name]</span>
+[Email] | [Portfolio link &mdash; fast loading] | [LinkedIn]
+  </div>
+  <div class="cl cl-green"><strong>What makes professors reply (in order):</strong><br>
+  1. You cited a specific paper of theirs &mdash; proves you read it, not just skimmed the abstract<br>
+  2. You stated a clear research question &mdash; proves you can think independently<br>
+  3. You attached a 2-page research proposal &mdash; proves you are serious and prepared<br>
+  4. Your email is under 250 words &mdash; proves you respect their time<br>
+  5. Your portfolio link loads instantly &mdash; slow links kill interest immediately</div>
+  <div class="dv"><span>Follow-Up Template &mdash; 2 Weeks Later, No Response</span></div>
+  <div class="cb">
+<span class="cm">// Subject: Follow-up &mdash; Research Inquiry / [Name] / BUET</span>
+
+Dear Professor [Last Name],
+
+I wanted to briefly follow up on my email from <span class="ac">[date]</span>
+regarding potential graduate supervision in <span class="ac">[topic area]</span>.
+
+Since writing, I have <span class="ac">[update: submitted to a conference /
+completed a new simulation study / refined my proposal based on
+further reading of your recent work]</span>.
+
+I remain very interested in your research on <span class="ac">[specific topic]</span>
+and would be grateful for any response, even brief.
+
+Best regards, <span class="ac">[Your name]</span> | <span class="ac">[Portfolio link]</span>
+  </div>
+  <div class="dv"><span>Networking &mdash; How to Be Noticed Before the Email</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-ttl">Cite their work in your papers</div><div class="c-bdy">When you publish, cite professors you plan to contact. Academics get Google Scholar alerts when their work is cited. Your name appears in their inbox before you even send the email &mdash; creating recognition before the formal inquiry.</div></div>
+    <div class="card ca"><div class="c-ttl">Engage with their public work</div><div class="c-bdy">If a professor posts on ResearchGate or gives a public talk, engage with a thoughtful specific comment. A good public comment takes 5 minutes and can determine whether your email gets opened or deleted.</div></div>
+    <div class="card ca"><div class="c-ttl">Attend virtual seminars + ask questions</div><div class="c-bdy">Many top schools host free public lectures online. Attend, ask a specific intelligent question in the Q&amp;A, then follow up by email: &ldquo;I was the student who asked about X at your seminar last week.&rdquo; They will remember.</div></div>
+    <div class="card ca"><div class="c-ttl">Send your published paper</div><div class="c-bdy">Once you have a published paper, email it: &ldquo;I thought this might interest you given your work on X. I am currently seeking graduate supervision and would value your feedback.&rdquo; This is the most natural, least presumptuous outreach possible.</div></div>
+  </div>
+  <h3 class="sh3">What NOT to Do &mdash; Common Mistakes</h3>
+  <ul class="ck">
+    <li><span class="ck-ico">&#10007;</span>&ldquo;I am very passionate about architecture&rdquo; &mdash; passion is assumed. Research alignment is what matters.</li>
+    <li><span class="ck-ico">&#10007;</span>Emailing without reading any of their actual work &mdash; professors see through this immediately</li>
+    <li><span class="ck-ico">&#10007;</span>Sending the same email to 30 professors &mdash; copy-paste emails are obvious and insulting</li>
+    <li><span class="ck-ico">&#10007;</span>Emails over 400 words &mdash; too long. Respect their time ruthlessly.</li>
+    <li><span class="ck-ico">&#10007;</span>Asking &ldquo;what funding is available?&rdquo; in the first email &mdash; signals you care about money, not research</li>
+    <li><span class="ck-ico">&#10007;</span>No portfolio link, or a broken/slow one &mdash; your work is the argument, make it accessible</li>
+    <li><span class="ck-ico">&#10007;</span>Following up after 3 days &mdash; wait at least 2 weeks. Professors are genuinely busy.</li>
+  </ul>
+</div>
+
+<!-- S10: ENGLISH + INTERVIEW -->
+</div>
+
+<div class="sec" id="s10">
+  <div class="s-pre">Section 10</div>
+  <h2 class="s-h">English &amp; Interview Preparation</h2>
+  <p class="s-intro">English is the operating system of your international career. Treat it as seriously as any design skill.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Exam</th><th>Target Score</th><th>Needed For</th><th>Prep Time</th><th>Strategy</th></tr></thead>
+    <tbody>
+      <tr><td><strong>IELTS Academic</strong></td><td>7.0 overall, 7.0 Writing</td><td>MEXT, DAAD, most programs</td><td>3&ndash;6 months</td><td>Cambridge IELTS 13&ndash;17 books + daily academic writing practice</td></tr>
+      <tr><td><strong>TOEFL iBT</strong></td><td>100+</td><td>USA programs, Fulbright</td><td>3&ndash;4 months</td><td>ETS official prep + daily speaking practice (10 min/day)</td></tr>
+      <tr><td><strong>IELTS 7.5</strong></td><td>7.5 overall, 7.0+ Writing</td><td>Fulbright, ETH, Harvard GSD</td><td>6+ months of immersion</td><td>Academic reading daily + write one essay per week for feedback</td></tr>
+      <tr><td><strong>German A2/B1</strong></td><td>A2 minimum, B1 ideal</td><td>Daily life in Germany + DAAD bonus points</td><td>6&ndash;12 months</td><td>Duolingo daily + Goethe Institut online courses (free resources)</td></tr>
+      <tr><td><strong>Japanese (MEXT provides)</strong></td><td>Basic phrases helpful</td><td>Japan daily life</td><td>MEXT provides 6-month language training on arrival</td><td>Learn Hiragana + basic phrases before arrival &mdash; shows respect to professors</td></tr>
+    </tbody>
+  </table></div>
+  <div class="dv"><span>Interview Preparation &mdash; By Scholarship</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">MEXT Embassy Interview</div><div class="c-ttl">Japan Scholarship Interview</div><div class="c-bdy">Typical questions:<br>&mdash; Why Japan specifically?<br>&mdash; Which university and professor have you contacted?<br>&mdash; Describe your research proposal in 3 minutes<br>&mdash; What will you do after your degree?<br>&mdash; How does your research connect Japan and Bangladesh?<br><br><strong>Preparation:</strong> 10 mock interviews minimum. Know your research proposal perfectly. Dress formally.</div></div>
+    <div class="card ca"><div class="c-lbl">Fulbright Bangladesh Interview</div><div class="c-ttl">Fulbright Selection</div><div class="c-bdy">Typical questions:<br>&mdash; Why this specific US university and program?<br>&mdash; How does your research benefit Bangladesh&rsquo;s development?<br>&mdash; Describe a leadership experience and its outcome<br>&mdash; What is your 5-year plan after the scholarship?<br>&mdash; How will you share what you learn when you return?<br><br><strong>Key:</strong> Fulbright wants future leaders, not just academics. Show community engagement.</div></div>
+    <div class="card"><div class="c-lbl">Portfolio Review Format</div><div class="c-ttl">ETH / TU Delft / GSD</div><div class="c-bdy">The 3-minute portfolio review is common at top schools.<br><br>Structure: <strong>Problem &rarr; Research &rarr; Concept &rarr; Outcome &rarr; Implication</strong><br><br>Practise: Record yourself presenting. Reduce hesitation words. Speak to the concept, not the image. Never say &ldquo;this is a rendering of&hellip;&rdquo; &mdash; describe what the space does.</div></div>
+    <div class="card"><div class="c-lbl">Academic English Practice</div><div class="c-ttl">Research Discussion Skills</div><div class="c-bdy">Learn academic hedging: &ldquo;My research suggests&hellip;&rdquo; &middot; &ldquo;Based on the evidence&hellip;&rdquo; &middot; &ldquo;One limitation of this study is&hellip;&rdquo;<br><br><strong>Practice:</strong> Read 1 journal paper per week. Summarise it aloud in 90 seconds. After 3 months this trains both comprehension and academic speaking simultaneously.</div></div>
+  </div>
+</div>
+
+<!-- S11: READING + THEORY -->
+</div>
+
+<div class="sec" id="s11">
+  <div class="s-pre">Section 11</div>
+  <h2 class="s-h">Reading &amp; Theory System</h2>
+  <p class="s-intro">The intellectual infrastructure that makes every other section stronger &mdash; the books, journals, and thinkers you must know deeply before applying anywhere serious.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Phase</th><th>Books</th><th>Why</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Foundation</strong></td><td>Experiencing Architecture (Rasmussen) &middot; Architecture: Form, Space and Order (Ching) &middot; Analysing Architecture (Unwin) &middot; 101 Things (Frederick)</td><td>Build the spatial vocabulary that all theory builds upon. Without these, everything else is abstract.</td><td>Now &mdash; L2T2 / L3T1</td></tr>
+      <tr><td><strong>Phenomenology</strong></td><td>The Eyes of the Skin (Pallasmaa) &middot; Atmospheres (Zumthor) &middot; The Poetics of Space (Bachelard) &middot; In Praise of Shadows (Tanizaki)</td><td>The philosophical basis of experience-centred design &mdash; essential for Japan and Germany portfolios and for writing a compelling SOP.</td><td>L3T1 &rarr; L3T2</td></tr>
+      <tr><td><strong>Critical Theory</strong></td><td>Towards a New Architecture (Le Corbusier) &middot; Complexity and Contradiction (Venturi) &middot; Modern Architecture: A Critical History (Frampton) &middot; A Pattern Language (Alexander)</td><td>The intellectual armature behind every scholarship statement of purpose. Cannot write a serious SOP without this background.</td><td>L3T2 &rarr; L4T1</td></tr>
+      <tr><td><strong>Urban Theory</strong></td><td>Death and Life of Great American Cities (Jacobs) &middot; Architecture of the City (Rossi) &middot; Delirious New York (Koolhaas) &middot; The Production of Space (Lefebvre)</td><td>Essential for urban research topics and for ETH / Delft / Columbia / Japan urban labs. Shows you understand cities as arguments, not just backgrounds.</td><td>L4T1 &rarr; L4T2</td></tr>
+      <tr><td><strong>Research Methods</strong></td><td>Architectural Research Methods (Groat &amp; Wang) &middot; How to Write a Thesis (Eco) &middot; The Craft of Research (Booth, Colomb, Williams)</td><td>Essential before writing your first paper and mandatory before your thesis. The manual for how academic knowledge is produced.</td><td>L3T2 &rarr; L4T1</td></tr>
+      <tr><td><strong>Computational Theory</strong></td><td>The Architecture Machine (Negroponte) &middot; Digital Fabrications (Iwamoto) &middot; Parametric Architecture with GH (Woodbury) &middot; Non-Standard Architectures (Migayrou)</td><td>Theoretical grounding for computational work &mdash; essential for ETH, TU Delft, Japan computational labs. Shows you understand WHY, not just HOW.</td><td>L3T2 &rarr; L4T2</td></tr>
+      <tr><td><strong>Environmental Design</strong></td><td>Sun Wind and Light (Brown &amp; DeKay) &middot; The Weather Architecture (Wigginton &amp; Harris) &middot; A Pattern Language &mdash; environmental patterns (Alexander)</td><td>Environmental design credibility &mdash; essential for Germany and Netherlands applications where sustainability is not optional but central.</td><td>L4T1 onwards</td></tr>
+      <tr><td><strong>Urbanism + Social</strong></td><td>The Image of the City (Lynch) &middot; Collage City (Rowe &amp; Koetter) &middot; Genius Loci (Norberg-Schulz) &middot; Space and Place (Yi-Fu Tuan)</td><td>For research topics on urban identity, place, and memory &mdash; the theoretical grounding for several of the 20 research topics in Section 7.</td><td>L4T1 &rarr; L5</td></tr>
+    </tbody>
+  </table></div>
+  <div class="dv"><span>Journals, Channels &amp; Communities</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Essential Academic Journals</div><div class="c-ttl">Read Regularly</div><div class="c-bdy">Archnet-IJAR &middot; Frontiers in Built Environment &middot; Journal of Architecture (Routledge) &middot; Buildings and Cities &middot; Journal of Architectural Education (JAE) &middot; SPACE (Korean, strong English content) &middot; Nexus Network Journal &middot; Architectural Science Review</div></div>
+    <div class="card ca"><div class="c-lbl">YouTube Channels</div><div class="c-ttl">Weekly Viewing</div><div class="c-bdy">GSAPP Talks (Columbia &mdash; theory lectures) &middot; GSD Talks (Harvard) &middot; ETH Zurich public lectures &middot; Kirsten Dirksen (vernacular housing globally) &middot; ParametricArchitecture (tutorials) &middot; Mostapha Roudsari (Ladybug) &middot; The Thought Emporium (fabrication)</div></div>
+    <div class="card ca"><div class="c-lbl">Architects to Study Deeply</div><div class="c-ttl">Understand Their Thinking, Not Just Buildings</div><div class="c-bdy">Peter Zumthor (phenomenology in built form) &middot; Tadao Ando (material + light + silence) &middot; Kengo Kuma (Japan entry point &mdash; material research) &middot; Alejandro Aravena (social architecture) &middot; Diébédo Francis Kéré (local material + global acclaim) &middot; MVRDV (data-driven urbanism) &middot; Herzog &amp; de Meuron (material research as concept)</div></div>
+    <div class="card ca"><div class="c-lbl">Reading Habit System</div><div class="c-ttl">1 Book Per Month &mdash; Annotated</div><div class="c-bdy">Read 1 architecture book per month, annotated. Write a 1-page response after finishing. Read 3&ndash;5 journal papers per month in your research area. Keep a reading journal: title, main argument, what you agree/disagree with, how it connects to your research. This becomes source material for your SOP and research proposals.</div></div>
+  </div>
+</div>
+
+<!-- S12: REALITY CHECK -->
+</div>
+
+<div class="sec" id="s12">
+  <div class="s-pre">Section 12</div>
+  <h2 class="s-h">Reality Check</h2>
+  <p class="s-intro">An honest, clear-eyed assessment of where you stand, what is genuinely hard, and what is achievable with deliberate sustained work.</p>
+  <div class="cl cl-red"><strong>Honest assessment:</strong> Getting a fully funded scholarship to ETH, Harvard, or MIT requires a near-perfect profile. It is possible from BUET &mdash; people have done it &mdash; but it requires 4 years of deliberate, consistent work. The students who succeed do not get lucky. They prepare better and longer than everyone around them.</div>
+  <div class="tw"><table>
+    <thead><tr><th>Dimension</th><th>BUET Advantage</th><th>BUET Challenge</th><th>How to Overcome</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Academic Reputation</strong></td><td>BUET is Bangladesh&rsquo;s most prestigious engineering university &mdash; well known in Japan, Germany, and across South Asia</td><td>Architecture faculty research ranking is not globally prominent</td><td>Let your research outputs and professor recommendation letters speak louder than the institution name</td></tr>
+      <tr><td><strong>Design Education</strong></td><td>Strong studio culture, rigorous technical training, excellent drawing foundation</td><td>Less exposure to computational tools and research methodology than European schools</td><td>Self-teach computation starting now. Develop your research track independently &mdash; do not wait for curriculum.</td></tr>
+      <tr><td><strong>Research Output</strong></td><td>BUET graduates have published in international journals. It is done and it is possible.</td><td>Architecture department research culture is weaker than engineering departments</td><td>Start early, find co-authors in engineering/planning if needed, target accessible journals for first publication</td></tr>
+      <tr><td><strong>Language</strong></td><td>English-medium education is a major structural advantage over Japanese, Korean, and Chinese applicants to the same programs</td><td>Academic writing quality &mdash; the specific register of scholarly English &mdash; needs deliberate development</td><td>Write every week, get feedback, read academic papers actively rather than passively</td></tr>
+      <tr><td><strong>Local Context</strong></td><td>Bangladesh provides unique, globally relevant research context &mdash; climate, density, informal urbanism, disaster resilience</td><td>International evaluators may initially undervalue work from the Global South</td><td>Frame your Bangladeshi context explicitly as a global case study. &ldquo;What Bangladesh shows us about X&rdquo; is far more powerful than &ldquo;A study of X in Bangladesh.&rdquo;</td></tr>
+      <tr><td><strong>Portfolio</strong></td><td>Strong design ability, technically capable, good spatial instincts from rigorous studio training</td><td>Most BUET portfolios lack research depth, conceptual storytelling, and computational work</td><td>This entire document gives you the strategy to fix all three. The gap between current and elite is entirely bridgeable.</td></tr>
+    </tbody>
+  </table></div>
+  <h3 class="sh3">What Would Make You Elite-Level Internationally</h3>
+  <ul class="ck">
+    <li><span class="ck-ico">&#10003;</span>CGPA 3.7+ with a clear upward trend &mdash; every semester better than the last signals growth, not stagnation</li>
+    <li><span class="ck-ico">&#10003;</span>1 published peer-reviewed paper before graduation &mdash; even a good conference paper changes your applicant category entirely</li>
+    <li><span class="ck-ico">&#10003;</span>IELTS 7.5+ with 7.0 in Writing specifically &mdash; Writing is what scholarship committees actually read</li>
+    <li><span class="ck-ico">&#10003;</span>Grasshopper fluency demonstrated through real designed projects in your portfolio &mdash; not tutorials, actual work</li>
+    <li><span class="ck-ico">&#10003;</span>1 internationally recognised competition result &mdash; shortlisted or higher in UIA, LafargeHolcim, or eVolo</li>
+    <li><span class="ck-ico">&#10003;</span>Prior contact and informal agreement with a target professor before submitting your scholarship application</li>
+    <li><span class="ck-ico">&#10003;</span>A portfolio that is conceptually coherent &mdash; 3&ndash;4 projects that all speak the same intellectual language</li>
+    <li><span class="ck-ico">&#10003;</span>A research proposal that cites specific professors at your target institution and positions your work as extending theirs</li>
+    <li><span class="ck-ico">&#10003;</span>Three recommendation letters from faculty who know your research, not just your grades</li>
+    <li><span class="ck-ico">&#10003;</span>A personal story that connects Bangladesh&rsquo;s specific conditions to your research and to a global architectural question</li>
+  </ul>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Why Students Fail Despite Trying</div><div class="c-ttl">Common Failure Patterns</div><div class="c-bdy">Applying with a generic portfolio &middot; Sending generic professor emails &middot; Starting preparation only in the final year &middot; Not taking IELTS seriously &middot; Having no defined research question &middot; Choosing competitions randomly &middot; Not asking for recommendation letters until 2 weeks before deadline &middot; Writing SOPs about passion for architecture instead of a specific research question</div></div>
+    <div class="card ca"><div class="c-lbl">What Successful BUET Students Did Differently</div><div class="c-ttl">The Winning Pattern</div><div class="c-bdy">Started preparing 3&ndash;4 years before applying &middot; Had a specific research topic by Year 2 &middot; Published or presented at a conference before applying &middot; Contacted professors 1&ndash;2 years before target intake &middot; Had a portfolio with a clear conceptual identity &middot; Treated scholarship applications as a full-time job for 6 months before submission</div></div>
+  </div>
+</div>
+
+<!-- S13: FINAL MASTER STRATEGY -->
+</div>
+
+<div class="sec" id="s13">
+  <div class="s-pre">Section 13</div>
+  <h2 class="s-h">Final Master Strategy</h2>
+  <p class="s-intro">Your optimal personal pathway &mdash; distilled from everything above into a concise, actionable mission plan with timelines, priorities, and a weekly system.</p>
+  <div class="cl"><strong>Your Mission in one sentence:</strong> Become the most research-capable, computationally fluent, and internationally connected architecture student in Bangladesh &mdash; by the time you graduate.</div>
+  <div class="dv"><span>Optimal Pathway Summary</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Best Country Path</div><div class="c-ttl">Japan &rarr; Germany &rarr; Netherlands &rarr; USA</div><div class="c-bdy">Japan (MEXT) is your primary target &mdash; most accessible, fully funded, excellent research labs. Apply simultaneously to Germany (DAAD / free tuition) and TU Delft. Build towards Fulbright / USA as your highest ambition. Apply to 8&ndash;10 programs across at least 3 countries in your final year.</div></div>
+    <div class="card ca"><div class="c-lbl">Best Software Specialisation</div><div class="c-ttl">Rhino + Grasshopper + Ladybug + Blender</div><div class="c-bdy">This combination opens Japan computational labs, TU Delft sustainability programs, TUM, and ETH simultaneously. Add Unreal Engine for presentation quality. These four tools make you competitive across every target country &mdash; a single technical investment that works everywhere.</div></div>
+    <div class="card ca"><div class="c-lbl">Best Portfolio Identity</div><div class="c-ttl">Computational + Climate Responsive + Bangladesh Grounded</div><div class="c-bdy">Projects that use Grasshopper to solve Dhaka&rsquo;s specific climate and urban challenges. This is unique, globally relevant, technically impressive, and only you can do it. No other applicant from Bangladesh will have this exact profile in any application pool.</div></div>
+    <div class="card ca"><div class="c-lbl">Best Research Direction</div><div class="c-ttl">Passive Cooling + Parametric Design + Bangladesh Urban Context</div><div class="c-bdy">This triple intersection is publishable, unique to your position in the world, relevant to Japan / Germany / Netherlands, and directly serves your PhD ambitions. It differentiates you from every other BUET applicant in every application pool simultaneously.</div></div>
+  </div>
+  <div class="dv"><span>Mission Plan &mdash; Your Unique Argument</span></div>
+  <div class="cl cl-blue">
+    <strong>What you are building:</strong> A profile as a computational architecture researcher specialising in climate-responsive design for dense tropical cities &mdash; with Bangladesh as your primary laboratory and case study, and Japan or Germany as your next stage.<br><br>
+    <strong>Your unique argument:</strong> The same urbanisation challenges making Bangladesh&rsquo;s cities uninhabitable &mdash; extreme heat, flooding, informal density &mdash; are the same challenges facing most of the world&rsquo;s fastest-growing cities. The architectural solutions developed for Dhaka will matter globally. That is your research&rsquo;s significance.<br><br>
+    <strong>Why professors will fund you:</strong> You bring a research context that no European or East Asian student can provide. You will extend their computational methods into a territory they cannot access without you.
+  </div>
+  <div class="dv"><span>1-Year Action Plan &mdash; Starting Now</span></div>
+  <div class="tl">
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 1&ndash;2</div><div class="tl-t">Foundations &mdash; Set the Platform</div><div class="tl-b">Start Rhino/GH daily practice (1 hr/day) &middot; Choose your specific research topic &middot; Find a BUET faculty research mentor &middot; Start IELTS vocabulary daily &middot; Open Behance and upload your best existing project &middot; Read: Experiencing Architecture + 101 Things I Learned in Architecture School</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 3&ndash;4</div><div class="tl-t">Research Begins &mdash; Build the Intellectual Foundation</div><div class="tl-b">Read 20+ papers on your chosen research topic &middot; Write a 2,000-word literature review &middot; Submit a conference abstract (BAPA or ARCASIA) &middot; Map 10 target professors (Japan + Germany) &middot; Complete first portfolio project with a research angle &middot; Take IELTS practice test to get a baseline score</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 5&ndash;7</div><div class="tl-t">Build + Submit &mdash; First Real Outputs</div><div class="tl-b">Submit full conference paper (co-authored with faculty supervisor) &middot; Take IELTS &mdash; target 7.0 &middot; Grasshopper intermediate: first full parametric project &middot; Enter 1 international design competition &middot; Send first 3 professor emails (Japan) with research proposals &middot; 2 portfolio projects complete</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 8&ndash;10</div><div class="tl-t">Deepen + Connect &mdash; Build the Network</div><div class="tl-b">Conference paper result &mdash; follow up regardless of outcome &middot; Start Blender atmospheric rendering workflow &middot; Follow up on professor emails &middot; Start MEXT / DAAD research proposal draft &middot; Complete 4th portfolio project &middot; Begin Ladybug environmental simulation</div></div>
+    <div class="tli"><div class="tld"></div><div class="tl-lbl">Month 11&ndash;12</div><div class="tl-t">Year 1 Review &mdash; Assess and Accelerate</div><div class="tl-b">IELTS retake if needed (target 7.5) &middot; At least 1 professor in active email conversation &middot; Research proposal draft complete &middot; 4 strong portfolio projects with consistent visual identity &middot; Start journal paper draft &middot; 1 competition entry submitted &middot; Write your Year 2 plan</div></div>
+  </div>
+  <div class="dv"><span>4-Year Roadmap Summary</span></div>
+  <div class="tw"><table>
+    <thead><tr><th>Year</th><th>Theme</th><th>Key Outputs</th><th>Scholarship Actions</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Year 1 (L2T2&ndash;L3T1)</strong></td><td>Foundation + Research Launch</td><td>1st research-angle portfolio project &middot; Literature review complete &middot; IELTS 7.0 &middot; Rhino/GH intermediate &middot; Conference abstract submitted</td><td>Map target professors &middot; Understand MEXT process &middot; Build Behance profile</td></tr>
+      <tr><td><strong>Year 2 (L3T2&ndash;L4T1)</strong></td><td>Publication + Professor Contact</td><td>Conference paper submitted + accepted &middot; IELTS 7.5 &middot; 4 portfolio projects &middot; First parametric project &middot; Blender workflow complete</td><td>First professor emails (Japan + Germany) &middot; DAAD research begins &middot; GKS prep begins</td></tr>
+      <tr><td><strong>Year 3 (L4T1&ndash;L4T2)</strong></td><td>Applications Season</td><td>Paper published &middot; Journal submission under review &middot; 6 portfolio projects &middot; Ladybug simulation project &middot; 1 competition shortlisted</td><td>MEXT Embassy application &middot; DAAD application &middot; GKS application &middot; TU Delft / ETH application</td></tr>
+      <tr><td><strong>Year 4 (L5)</strong></td><td>Thesis + Final Push</td><td>Thesis as proto-dissertation &middot; 2nd paper from thesis &middot; 8 portfolio projects &middot; CGPA 3.7+ maintained</td><td>Fulbright application &middot; US university applications &middot; Scholarship interviews &middot; Accept best offer</td></tr>
+    </tbody>
+  </table></div>
+  <div class="dv"><span>Weekly Routine System</span></div>
+  <div class="cg">
+    <div class="card ca"><div class="c-lbl">Every Day</div><div class="c-ttl">Daily Non-Negotiables</div><div class="c-bdy">06:00 &mdash; 30 min reading (theory or research paper)<br>07:00 &mdash; 30 min IELTS vocabulary / academic English<br>Evening &mdash; 45 min software practice (Rhino / GH / Blender)<br>Night &mdash; 20 min sketch: 1 spatial idea from the day<br>Before sleep &mdash; look at 1 reference building. Ask: what is the concept?</div></div>
+    <div class="card ca"><div class="c-lbl">Every Week</div><div class="c-ttl">Weekly Structure</div><div class="c-bdy">Monday &mdash; Software learning + current studio project<br>Tuesday &mdash; Research paper reading + annotated notes<br>Wednesday &mdash; Portfolio project development<br>Thursday &mdash; Writing: SOP draft / paper section / professor email<br>Friday &mdash; Competition work or experimental side project<br>Saturday &mdash; Deep work block: 3&ndash;4 hours uninterrupted<br>Sunday &mdash; Review the week, plan the next, rest completely</div></div>
+    <div class="card ca"><div class="c-lbl">Every Month</div><div class="c-ttl">Monthly Milestones</div><div class="c-bdy">&rarr; 1 architecture book finished and annotated<br>&rarr; 3&ndash;5 research papers read and filed<br>&rarr; 1 portfolio project advanced or completed<br>&rarr; 1 competition entered or 1 workshop attended<br>&rarr; 1 professor inquiry email sent<br>&rarr; 1 writing piece produced: abstract / essay / paper draft<br>&rarr; Update Behance portfolio</div></div>
+  </div>
+  <div class="dv"><span>Top 20 Priorities &mdash; The Complete Checklist</span></div>
+  <ul class="ck">
+    <li><span class="ck-ico">1</span>Maintain CGPA 3.5+ every semester without exception &mdash; do not sacrifice grades for any side project</li>
+    <li><span class="ck-ico">2</span>Achieve IELTS 7.0 by L3T2 and 7.5 by L4T1 &mdash; start preparation this month, not next semester</li>
+    <li><span class="ck-ico">3</span>Learn Rhino + Grasshopper to intermediate level within 6 months &mdash; daily practice, not weekly</li>
+    <li><span class="ck-ico">4</span>Choose a specific research topic by end of L2T2 &mdash; narrow and researchable, not broad and vague</li>
+    <li><span class="ck-ico">5</span>Find a BUET faculty research mentor by L3T1 &mdash; ask formally, bring a research question to that first meeting</li>
+    <li><span class="ck-ico">6</span>Submit a conference paper abstract by L3T1 &mdash; start writing it now, even imperfectly</li>
+    <li><span class="ck-ico">7</span>Have a published conference paper by L4T1 &mdash; this single item changes your applicant category globally</li>
+    <li><span class="ck-ico">8</span>Read 12 architecture books per year, annotated &mdash; 1 per month, every month, without exception</li>
+    <li><span class="ck-ico">9</span>Build a portfolio with at least 4 strong, research-grounded projects by L4T1 &mdash; quality over quantity always</li>
+    <li><span class="ck-ico">10</span>Develop a clear design identity visible across all portfolio work: computational + climate + Bangladesh-rooted</li>
+    <li><span class="ck-ico">11</span>Contact 3 Japanese professors with specific research proposals by L3T2 &mdash; surgical emails, not generic ones</li>
+    <li><span class="ck-ico">12</span>Understand the DAAD process fully and contact 3 German professors by L4T1</li>
+    <li><span class="ck-ico">13</span>Enter at least 1 major international competition per year &mdash; focus on UIA, LafargeHolcim, eVolo, CAADRIA</li>
+    <li><span class="ck-ico">14</span>Learn Ladybug / Honeybee environmental simulation by L3T2 &mdash; use it in a real portfolio project</li>
+    <li><span class="ck-ico">15</span>Learn Blender rendering workflow by L3T1 &mdash; replace Photoshop-only presentations immediately</li>
+    <li><span class="ck-ico">16</span>Build and maintain your online portfolio on Behance or a personal site &mdash; update every semester</li>
+    <li><span class="ck-ico">17</span>Collect 3 recommendation letters from faculty who know your research, not just your GPA &mdash; cultivate these relationships now</li>
+    <li><span class="ck-ico">18</span>Frame your BUET thesis explicitly as the foundation of a PhD dissertation &mdash; write it with that ambition</li>
+    <li><span class="ck-ico">19</span>Apply to at least 8&ndash;10 programs across 3+ countries in your final year &mdash; cast a wide net strategically</li>
+    <li><span class="ck-ico">20</span>Remember every day: your Bangladeshi context is not a limitation &mdash; it is your most powerful and irreplaceable research asset</li>
+  </ul>
+  <div class="cl cl-green" style="margin-top:40px;">
+    <strong>Final word, Tausif:</strong> The distance between where you are now and where you want to go is entirely bridgeable &mdash; not easily, but completely. BUET students have received MEXT scholarships, DAAD grants, and Fulbrights. What they had in common was not luck, family connections, or extraordinary natural talent. It was a level of deliberate, sustained preparation that most of their peers were unwilling to maintain for 4 years.<br><br>
+    You already have what most international applicants do not: a research context that is globally relevant, urgent, and entirely your own. Dhaka&rsquo;s density, climate, and urban conditions are among the most important architectural problems of the 21st century. You live inside the laboratory.<br><br>
+    <strong>Start this week. Not next semester. This week.</strong><br>
+    The students sitting at ETH and UTokyo right now &mdash; the ones from Bangladesh who made it &mdash; started exactly where you are, in exactly Year 2.
+  </div>
+</div>
+</div>
+
+
+</div><!-- end masterplan-sections -->
+
+<div class="footer">
+  Made with &#10084;&#65039; by <strong>Al Mukit</strong> &nbsp;&middot;&nbsp;
+  &copy; 2026 Al Mukit &mdash; AL MUKIT-LAB. All rights reserved.
+</div>
+
+<script>
+// ── STATE ──
+let state = { scholarships:[], professors:[], notes:'' };
+
+function load(){
+  try{
+    const s = localStorage.getItem('almukit_tracker');
+    if(s) state = {...state, ...JSON.parse(s)};
+  }catch(e){}
+}
+function save(){
+  try{ localStorage.setItem('almukit_tracker', JSON.stringify(state)); }catch(e){}
+  render();
+}
+
+// ── HELPERS ──
+const $ = id => document.getElementById(id);
+function uid(){ return Date.now() + Math.random().toString(36).slice(2); }
+
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const diff = new Date(dateStr) - new Date();
+  return Math.ceil(diff / (1000*60*60*24));
+}
+
+function statusClass(s){
+  return {planning:'s-planning',inprogress:'s-inprogress',submitted:'s-submitted',accepted:'s-accepted',rejected:'s-rejected'}[s]||'s-planning';
+}
+function statusLabel(s){
+  return {planning:'Planning',inprogress:'In Progress',submitted:'Submitted',accepted:'Accepted ✓',rejected:'Rejected'}[s]||s;
+}
+function respClass(s){
+  return {none:'r-none',sent:'r-sent',replied:'r-replied',agreed:'r-agreed',rejected:'r-rejected'}[s]||'r-none';
+}
+function respLabel(s){
+  return {none:'Not contacted',sent:'Email sent',replied:'Replied',agreed:'Agreed ✓',rejected:'Not interested'}[s]||s;
+}
+
+// ── DEFAULT DATA ──
+function loadDefaults(){
+  if(state.scholarships.length > 0) return;
+  state.scholarships = [
+    {id:uid(),name:'MEXT Japan',country:'Japan',uni:'UTokyo / Waseda / Kyoto',deadline:'2028-05-01',status:'planning',funding:'Full tuition + ¥117,000–144,000/month + airfare',reqs:'CGPA 3.0+, Research proposal, IELTS 6.5+, 3 reference letters',notes:'Contact professor FIRST before applying. University nomination route has much higher success rate.',checks:[{t:'Choose target professor and lab',d:false},{t:'Read 3 of their papers',d:false},{t:'Write 2-page research proposal',d:false},{t:'Send cold email to professor',d:false},{t:'Follow up if no response in 2 weeks',d:false},{t:'Attend MEXT briefing at Bangladesh Embassy',d:false},{t:'Prepare formal application documents',d:false},{t:'Submit embassy application (April–June)',d:false}]},
+    {id:uid(),name:'DAAD Germany',country:'Germany',uni:'TU Berlin / TU Munich / Bauhaus',deadline:'2028-10-15',status:'planning',funding:'€934/month + zero tuition',reqs:'First class degree (3.5+), Research proposal, Host professor letter, IELTS 6.5+ or German B2',notes:'Email German professors from L4T1. DAAD values clearly defined research questions.',checks:[{t:'Identify target German universities',d:false},{t:'Contact 3 German professors',d:false},{t:'Get host professor letter of intent',d:false},{t:'Write DAAD research proposal',d:false},{t:'Prepare academic CV',d:false},{t:'Gather transcripts and certificates',d:false},{t:'Submit DAAD application (Oct–Nov)',d:false}]},
+    {id:uid(),name:'GKS South Korea',country:'South Korea',uni:'KAIST / Seoul National University',deadline:'2028-09-30',status:'planning',funding:'Full tuition + ₩900,000/month',reqs:'CGPA 3.0+, IELTS 5.5+, Health certificate, Self-introduction',notes:'Very realistic for BUET students. Run prep simultaneously with Japan.',checks:[{t:'Check GKS eligibility criteria',d:false},{t:'Prepare self-introduction letter',d:false},{t:'Get study plan written',d:false},{t:'Prepare IELTS score',d:false},{t:'Submit GKS application (Sept–Nov)',d:false}]},
+    {id:uid(),name:'Fulbright USA',country:'USA',uni:'Harvard GSD / MIT / Columbia GSAPP',deadline:'2029-03-15',status:'planning',funding:'Full tuition + living allowance + airfare + health insurance',reqs:'CGPA 3.7+, TOEFL 100+, Leadership experience, Research proposal',notes:'Most prestigious but hardest (3–5% acceptance in Bangladesh). Must show community leadership + research vision.',checks:[{t:'Take TOEFL — target 100+',d:false},{t:'Contact US professors informally first',d:false},{t:'Apply to 3–5 US universities',d:false},{t:'Write Fulbright SOP (connect to Bangladesh development)',d:false},{t:'Gather 3 reference letters',d:false},{t:'Practise 10+ mock interviews',d:false},{t:'Submit Fulbright application (Feb–Apr)',d:false}]},
+  ];
+  state.professors = [
+    {id:uid(),name:'Prof. Kengo Kuma (example)',uni:'UTokyo',country:'Japan',area:'Material research, computational design, sustainable architecture',date:'',status:'none',notes:'Research: How traditional Japanese materials can be reinterpreted through computational design. Very relevant to your Bangladesh material research.'},
+    {id:uid(),name:'(Add your first real contact)',uni:'',country:'Japan',area:'',date:'',status:'none',notes:''},
+  ];
+}
+
+// ── RENDER ──
+function render(){
+  renderStats();
+  renderCards();
+  renderProfTable();
+  renderTimeline();
+  loadNotes();
+}
+
+function renderStats(){
+  const total = state.scholarships.length;
+  const planning = state.scholarships.filter(s=>s.status==='planning').length;
+  const inprog  = state.scholarships.filter(s=>s.status==='inprogress').length;
+  const submitted = state.scholarships.filter(s=>s.status==='submitted').length;
+  const accepted = state.scholarships.filter(s=>s.status==='accepted').length;
+  const profContacted = state.professors.filter(p=>p.status!=='none').length;
+  const profReplied = state.professors.filter(p=>['replied','agreed'].includes(p.status)).length;
+
+  $('stats-row').innerHTML = `
+    <div class="stat"><span class="stat-n">${total}</span><span class="stat-l">Scholarships</span></div>
+    <div class="stat"><span class="stat-n blue">${inprog}</span><span class="stat-l">In Progress</span></div>
+    <div class="stat"><span class="stat-n amber">${submitted}</span><span class="stat-l">Submitted</span></div>
+    <div class="stat"><span class="stat-n green">${accepted}</span><span class="stat-l">Accepted</span></div>
+    <div class="stat"><span class="stat-n">${state.professors.length}</span><span class="stat-l">Professors</span></div>
+    <div class="stat"><span class="stat-n blue">${profContacted}</span><span class="stat-l">Contacted</span></div>
+    <div class="stat"><span class="stat-n green">${profReplied}</span><span class="stat-l">Replied</span></div>
+  `;
+}
+
+function renderCards(){
+  const c = $('cards-container');
+  if(!state.scholarships.length){
+    c.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-size:13px;">No scholarships added yet. Click <strong>+ Add Scholarship</strong> to begin.</div>`;
+    return;
+  }
+  c.innerHTML = state.scholarships.map(s => {
+    const days = daysUntil(s.deadline);
+    const dStr = s.deadline ? new Date(s.deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'No deadline set';
+    const dClass = days !== null ? (days < 30 ? 'deadline-warning' : 'deadline-ok') : '';
+    const dLabel = days !== null ? (days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'Due today!' : `${days} days left`) : '';
+    const checks = s.checks||[];
+    const done = checks.filter(x=>x.d).length;
+    const pct = checks.length ? Math.round((done/checks.length)*100) : 0;
+    const checksHTML = checks.map((ch,i) => `
+      <div class="mc-item" onclick="toggleCheck('${s.id}',${i})">
+        <div class="mc-box ${ch.d?'checked':''}">${ch.d?'&#10003;':''}</div>
+        <div class="mc-text ${ch.d?'done':''}">${ch.t}</div>
+      </div>`).join('');
+
+    return `<div class="sch-card">
+      <div class="sch-head" style="background:${s.status==='accepted'?'#0a0a0a':'#fff'}">
+        <div>
+          <div class="sch-name" style="color:${s.status==='accepted'?'#fff':'var(--black)'}">${s.name}</div>
+          <div class="sch-country">${s.country}${s.uni?' &middot; '+s.uni:''}</div>
+        </div>
+        <span class="sch-status ${statusClass(s.status)}">${statusLabel(s.status)}</span>
+      </div>
+      <div class="sch-body">
+        <div class="sch-row"><span class="sch-row-label">Deadline</span><span class="sch-row-val ${dClass}">${dStr} ${dLabel?'('+dLabel+')':''}</span></div>
+        <div class="sch-row"><span class="sch-row-label">Funding</span><span class="sch-row-val">${s.funding||'—'}</span></div>
+        ${s.notes?`<div class="sch-row" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="sch-row-label">Notes</span><span style="font-size:11px;color:var(--sub);line-height:1.5;">${s.notes}</span></div>`:''}
+        <div class="prog-wrap">
+          <div class="prog-label"><span>${done}/${checks.length} tasks complete</span><span>${pct}%</span></div>
+          <div class="prog-bar"><div class="prog-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
+        </div>
+        <div class="mini-check">${checksHTML}</div>
+      </div>
+      <div class="sch-actions">
+        <select class="act-btn" onchange="updateStatus('${s.id}',this.value)" style="flex:2;">
+          ${['planning','inprogress','submitted','accepted','rejected'].map(v=>`<option value="${v}" ${s.status===v?'selected':''}>${statusLabel(v)}</option>`).join('')}
+        </select>
+        <button class="act-btn" onclick="editScholarship('${s.id}')">Edit</button>
+        <button class="act-btn danger" onclick="deleteScholarship('${s.id}')">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderProfTable(){
+  const b = $('prof-body');
+  if(!state.professors.length){
+    b.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);font-size:12px;">No professors added yet.</td></tr>`;
+    return;
+  }
+  b.innerHTML = state.professors.map(p => `
+    <tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.uni||'—'}</td>
+      <td>${p.country||'—'}</td>
+      <td style="max-width:160px;font-size:11px;color:var(--sub);">${p.area||'—'}</td>
+      <td>${p.date||'—'}</td>
+      <td><span class="resp-badge ${respClass(p.status)}">${respLabel(p.status)}</span></td>
+      <td style="max-width:140px;font-size:11px;color:var(--sub);">${p.notes||'—'}</td>
+      <td>
+        <button class="act-btn" onclick="editProfessor('${p.id}')" style="margin-right:4px;">Edit</button>
+        <button class="act-btn danger" onclick="deleteProfessor('${p.id}')">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderTimeline(){
+  const tw = $('timeline-wrap');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const colors = {planning:'#eff6ff',inprogress:'#fff4e8',submitted:'#f0fdf4',accepted:'#0a0a0a',rejected:'#fef2f2'};
+  const textColors = {planning:'#1d4ed8',inprogress:'#d4790a',submitted:'#16a34a',accepted:'#fff',rejected:'#dc2626'};
+
+  // Group by month/year
+  const grouped = {};
+  state.scholarships.forEach(s => {
+    if(!s.deadline) return;
+    const d = new Date(s.deadline);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label = `${months[d.getMonth()]} ${d.getFullYear()}`;
+    if(!grouped[key]) grouped[key] = {label, items:[]};
+    grouped[key].items.push(s);
+  });
+
+  const sorted = Object.keys(grouped).sort();
+  if(!sorted.length){
+    tw.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px;">Add scholarships with deadlines to see the timeline.</div>`;
+    return;
+  }
+
+  tw.innerHTML = sorted.map(key => {
+    const g = grouped[key];
+    const events = g.items.map(s =>
+      `<div class="tl-event" style="background:${colors[s.status]||'#f8f8f8'};color:${textColors[s.status]||'#0a0a0a'};border:1px solid ${colors[s.status]||'#e8e8e8'}">${s.name}</div>`
+    ).join('');
+    return `<div class="tl-row"><div class="tl-month">${g.label}</div><div class="tl-bar-wrap">${events}</div></div>`;
+  }).join('');
+}
+
+// ── SCHOLARSHIP CRUD ──
+function openModal(){ $('modal-title').textContent='Add Scholarship'; clearForm(); $('sch-modal').classList.add('open'); }
+function closeModal(id){ $(id).classList.remove('open'); }
+function closeModalOutside(e,id){ if(e.target===$(id)) closeModal(id); }
+
+function clearForm(){
+  ['f-name','f-country','f-uni','f-deadline','f-funding','f-reqs','f-notes'].forEach(id=>$(id).value='');
+  $('f-status').value='planning'; $('edit-id').value='';
+}
+
+function saveScholarship(){
+  const id = $('edit-id').value || uid();
+  const existing = state.scholarships.find(s=>s.id===id);
+  const reqs = $('f-reqs').value;
+  const defaultChecks = existing ? existing.checks : [
+    {t:'Research the scholarship requirements fully',d:false},
+    {t:'Prepare Statement of Purpose',d:false},
+    {t:'Gather academic transcripts',d:false},
+    {t:'Obtain 3 recommendation letters',d:false},
+    {t:'Prepare portfolio',d:false},
+    {t:'Write research proposal',d:false},
+    {t:'Take IELTS / TOEFL',d:false},
+    {t:'Submit application',d:false},
+  ];
+
+  const sch = {
+    id, checks: defaultChecks,
+    name: $('f-name').value || 'Unnamed Scholarship',
+    country: $('f-country').value,
+    uni: $('f-uni').value,
+    deadline: $('f-deadline').value,
+    status: $('f-status').value,
+    funding: $('f-funding').value,
+    reqs, notes: $('f-notes').value,
+  };
+
+  const idx = state.scholarships.findIndex(s=>s.id===id);
+  if(idx > -1) state.scholarships[idx] = sch;
+  else state.scholarships.push(sch);
+  save(); closeModal('sch-modal');
+}
+
+function editScholarship(id){
+  const s = state.scholarships.find(x=>x.id===id); if(!s) return;
+  $('modal-title').textContent = 'Edit Scholarship';
+  $('edit-id').value = id;
+  $('f-name').value = s.name||'';
+  $('f-country').value = s.country||'';
+  $('f-uni').value = s.uni||'';
+  $('f-deadline').value = s.deadline||'';
+  $('f-status').value = s.status||'planning';
+  $('f-funding').value = s.funding||'';
+  $('f-reqs').value = s.reqs||'';
+  $('f-notes').value = s.notes||'';
+  $('sch-modal').classList.add('open');
+}
+
+function deleteScholarship(id){
+  if(!confirm('Delete this scholarship?')) return;
+  state.scholarships = state.scholarships.filter(s=>s.id!==id);
+  save();
+}
+
+function updateStatus(id, status){
+  const s = state.scholarships.find(x=>x.id===id); if(!s) return;
+  s.status = status; save();
+}
+
+function toggleCheck(schId, idx){
+  const s = state.scholarships.find(x=>x.id===schId); if(!s||!s.checks) return;
+  s.checks[idx].d = !s.checks[idx].d; save();
+}
+
+// ── PROFESSOR CRUD ──
+function openProfModal(){ clearProfForm(); $('prof-modal').classList.add('open'); }
+
+function clearProfForm(){
+  ['pf-name','pf-uni','pf-country','pf-date','pf-area','pf-notes'].forEach(id=>$(id).value='');
+  $('pf-status').value='none'; $('prof-edit-id').value='';
+}
+
+function saveProfessor(){
+  const id = $('prof-edit-id').value || uid();
+  const p = {
+    id,
+    name: $('pf-name').value || 'Unknown Professor',
+    uni: $('pf-uni').value,
+    country: $('pf-country').value,
+    date: $('pf-date').value,
+    area: $('pf-area').value,
+    status: $('pf-status').value,
+    notes: $('pf-notes').value,
+  };
+  const idx = state.professors.findIndex(x=>x.id===id);
+  if(idx > -1) state.professors[idx] = p;
+  else state.professors.push(p);
+  save(); closeModal('prof-modal');
+}
+
+function editProfessor(id){
+  const p = state.professors.find(x=>x.id===id); if(!p) return;
+  $('prof-edit-id').value = id;
+  $('pf-name').value = p.name||'';
+  $('pf-uni').value = p.uni||'';
+  $('pf-country').value = p.country||'';
+  $('pf-date').value = p.date||'';
+  $('pf-area').value = p.area||'';
+  $('pf-status').value = p.status||'none';
+  $('pf-notes').value = p.notes||'';
+  $('prof-modal').classList.add('open');
+}
+
+function deleteProfessor(id){
+  if(!confirm('Delete this professor contact?')) return;
+  state.professors = state.professors.filter(p=>p.id!==id);
+  save();
+}
+
+// ── NOTES ──
+function saveNotes(){
+  state.notes = $('notes-area').value;
+  try{ localStorage.setItem('almukit_tracker', JSON.stringify(state)); }catch(e){}
+}
+function loadNotes(){
+  $('notes-area').value = state.notes || '';
+}
+
+// ── INIT ──
+load();
+loadDefaults();
+render();
+
+function toggleNav(){
+  document.getElementById('sidenav').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function navTo(id){
+  toggleNav();
+  var el = document.getElementById(id);
+  if(el){
+    var offset = 8;
+    var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({top: top, behavior: 'smooth'});
+  }
+}
+window.addEventListener('scroll',function(){
+  var doc=document.documentElement;
+  var st=doc.scrollTop||document.body.scrollTop;
+  var sh=doc.scrollHeight-doc.clientHeight;
+  document.getElementById('rfill').style.width=(sh>0?(st/sh)*100:0)+'%';
+  var allIds=['top','scholarships-section','professors-section','timeline-section',
+    'notes-section','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13'];
+  var cur='';
+  allIds.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top - 90 <= 0) cur=id;
+  });
+  document.querySelectorAll('.ni').forEach(function(n){
+    var onclick=n.getAttribute('onclick')||'';
+    var m=onclick.match(/navTo\('([^']+)'\)/);
+    if(m) n.classList.toggle('active', m[1]===cur);
+  });
+});
+
+</script>
+</body>
+</html>
